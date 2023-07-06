@@ -1,0 +1,5 @@
+{
+    "createTestUser": {"username": "testuser", "email": "test@example.com", "password": "password"},
+    "getTestUser": {"username": "testuser"},
+    "deleteTestUser": {"username": "testuser"}
+}
