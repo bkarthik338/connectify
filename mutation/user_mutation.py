@@ -1,8 +1,8 @@
 # File contains the Class for POST/UPDATE
-import bcrypt
 import strawberry
 
 from database import db
+from utility.user_utility import hashing_password
 from utility.user_utility import validate_email
 from utility.user_utility import validate_username
 
@@ -21,6 +21,10 @@ class UserMutation:
     def create_user(
         self, info, username: str, email: str, password: str
     ) -> CreateUserResposne:
+        if user_collection.find_one({"username": username}):
+            return CreateUserResposne(
+                msg=f"Username Already Exists: {username}", success=False
+            )
         if not validate_email(email=email):
             return CreateUserResposne(
                 msg=f"Invalid Email: {email}", success=False
@@ -29,9 +33,7 @@ class UserMutation:
             return CreateUserResposne(
                 msg=f"Invalid Username: {username}", success=False
             )
-        hashed_password = bcrypt.hashpw(
-            password.encode("utf-8"), bcrypt.gensalt()
-        )
+        hashed_password = hashing_password(password)
         user_data = {
             "username": username,
             "email": email,
