@@ -27,11 +27,13 @@ def load_user_json_file():
     return data
 
 
-def create_test_user() -> CreateUserResponse:
+def create_test_user(testcase: str) -> CreateUserResponse:
     """
     This function is to create test user.
+    Parameters are passed for negative test cases
+    :Invalid Username/Email
     """
-    data = load_user_json_file()["createTestUser"]
+    data = load_user_json_file()[testcase]
     userMutationInstance = UserMutation()
     response = userMutationInstance.create_user(
         Info,
@@ -52,12 +54,12 @@ def get_test_user() -> GetUserResponse:
     return response
 
 
-def delete_test_user() -> DeleteUserResponse:
+def delete_test_user(testcase: str) -> DeleteUserResponse:
     """
     This function is to delete created test user and testing
     the api as well
     """
-    data = load_user_json_file()["deleteTestUser"]
+    data = load_user_json_file()[testcase]
     userMutationInstance = UserMutation()
     response = userMutationInstance.delete_user(
         Info, username=data["username"]
