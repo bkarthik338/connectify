@@ -1,5 +1,9 @@
 {
-    "createTestUser": {"username": "testuser", "email": "test@example.com", "password": "password"},
+    "createTestUserValid": {"username": "testuser", "email": "test@example.com", "password": "password"},
+    "createTestAlreadyExists": {"username": "testuser", "email": "test@example.com", "password": "password"},
+    "createTestUserInvalidUsername": {"username": "12", "email": "test@example.com", "password": "password"},
+    "createTestUserInvalidEmail": {"username": "12", "email": "user!@example.com", "password": "password"},
     "getTestUser": {"username": "testuser"},
-    "deleteTestUser": {"username": "testuser"}
+    "deleteTestUser": {"username": "testuser"},
+    "deleteTestUserDontExists": {"username": "1234567"}
 }
