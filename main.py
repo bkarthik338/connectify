@@ -3,7 +3,7 @@ import uvicorn
 from fastapi import FastAPI
 from strawberry.asgi import GraphQL
 
-from mutation.mutation import UserMutation
+from mutation.user_mutation import UserMutation
 from query.user_query import UserQuery
 
 app = FastAPI()
