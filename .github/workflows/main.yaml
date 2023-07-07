@@ -6,21 +6,8 @@ on:
       - development
 
 jobs:
-  python-environment-setup:
-    name: Setting up the Environment (Python)
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-    - name: Set up Python Environment
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.x'
-
   database-installation-setup:
     name: Setup Database and its dependencies
-    needs: python-environment-setup
     runs-on: ubuntu-latest
 
     steps:
@@ -48,12 +35,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python Environment
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
     - name: Install Python Packages
       run: |
-            cd connectify
             git checkout development
             pip install -r requirements.txt
-
 
     - name: Running Pytest Testcases
       run: pytest tests/test*
