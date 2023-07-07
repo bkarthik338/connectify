@@ -34,7 +34,7 @@ jobs:
       run:  sudo apt-get update
 
     - name: Install MongoDB Package
-      run:  sudo apt-get search mongodb
+      run:  sudo apt search mongodb
 
     - name: Start MongoDB
       run:  sudo systemctl start mongod
