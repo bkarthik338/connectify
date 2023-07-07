@@ -12,6 +12,7 @@ def test_createuser():
     """
     This testcase is to check create user api
     """
+    print("Starting test: Valid Create User")
     response = create_test_user("createTestUserValid")
     assert isinstance(response, CreateUserResponse)
     assert response.success
