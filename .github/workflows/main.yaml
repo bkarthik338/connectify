@@ -18,6 +18,8 @@ jobs:
         python-version: '3.x'
 
   Setup Database and it's dependencies:
+
+    steps:
     - name: prerequisites for MongoDB
       run:  sudo apt-get install gnupg
 
