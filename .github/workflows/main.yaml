@@ -27,10 +27,8 @@ jobs:
     - name: Import the MongoDB public GPG Key
       run:  wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -
 
-
     - name: Creating a list file for MongoDB
       run:  echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list
-
 
     - name: Updating the package list
       run:  sudo apt update
@@ -40,3 +38,13 @@ jobs:
 
     - name: Start MongoDB
       run:  sudo systemctl start mongod
+
+  Setup-Python-Environment/Installation-of-Packages:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Install Python Packages
+      run:  pip install -r requirements.txt
+
+    - name: Running Pytest Testcases
+      run: pytest tests/test*
