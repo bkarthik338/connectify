@@ -47,7 +47,11 @@ jobs:
 
     steps:
     - name: Install Python Packages
-      run:  pip install -r requirements.txt
+      run: |
+            ll
+            pwd
+            pip install -r requirements.txt
+
 
     - name: Running Pytest Testcases
       run: pytest tests/test*
