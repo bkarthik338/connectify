@@ -14,8 +14,10 @@ from query.user_query import UserQuery
 load_dotenv()
 Info = None
 base_url = os.environ.get("BASE_URL")
-cwd = os.getcwd()
-user_json_file_path = os.path.join(cwd, "testdata/user_testcases.json")
+current_dir = os.path.dirname(os.path.abspath(__file__))
+user_json_file_path = os.path.join(
+    current_dir, "../testdata/user_testcases.json"
+)
 
 
 def load_user_json_file():
