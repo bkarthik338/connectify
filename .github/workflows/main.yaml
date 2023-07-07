@@ -20,6 +20,7 @@ jobs:
 
   database-installation-setup:
     name: Setup Database and its dependencies
+    needs: python-environment-setup
     runs-on: ubuntu-latest
 
     steps:
@@ -43,13 +44,14 @@ jobs:
 
   install-server-dependent-packages-run-pytest:
     name: Setup-Python-Environment/Installation-of-Packages
+    needs: database-installation-setup
     runs-on: ubuntu-latest
 
     steps:
     - name: Install Python Packages
       run: |
-            ls
-            pwd
+            cd connectify
+            git checkout development
             pip install -r requirements.txt
 
 
