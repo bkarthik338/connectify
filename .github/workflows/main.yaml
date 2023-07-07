@@ -25,16 +25,18 @@ jobs:
       run:  sudo apt-get install gnupg
 
     - name: Import the MongoDB public GPG Key
-      run:  curl -fsSL https://pgp.mongodb.com/server-6.0.asc | sudo gpg -o /usr/share/keyrings/mongodb-server-6.0.gpg --dearmor
+      run:  wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -
+
 
     - name: Creating a list file for MongoDB
-      run:  echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-6.0.gpg ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
+      run:  echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list
+
 
     - name: Updating the package list
-      run:  sudo apt-get update
+      run:  sudo apt update
 
     - name: Install MongoDB Package
-      run:  sudo apt search mongodb
+      run:  sudo apt install -y mongodb-org
 
     - name: Start MongoDB
       run:  sudo systemctl start mongod
