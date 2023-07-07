@@ -6,7 +6,7 @@ on:
       - development
 
 jobs:
-  Setup Environment:
+  Setup-Environment:
     runs-on: ubuntu-latest
 
     steps:
@@ -17,8 +17,9 @@ jobs:
       with:
         python-version: '3.x'
 
-  Setup Database and it's dependencies:
-
+  Setup-Database-and-its-dependencies:
+    runs-on: ubuntu-latest
+    
     steps:
     - name: prerequisites for MongoDB
       run:  sudo apt-get install gnupg
