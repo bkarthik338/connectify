@@ -33,8 +33,8 @@ jobs:
     - name: Updating the package list
       run:  sudo apt-get update
 
-    - name: Install MongoDB Package
-      run:  sudo apt-get install -y mongodb
+    # - name: Install MongoDB Package
+    #   run:  sudo apt-get install -y mongodb
 
     - name: Start MongoDB
       run:  sudo systemctl start mongod
