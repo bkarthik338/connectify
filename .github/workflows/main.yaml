@@ -6,7 +6,8 @@ on:
       - development
 
 jobs:
-  Setup-Environment:
+  python-environment-setup:
+    name: Setting up the Environment (Python)
     runs-on: ubuntu-latest
 
     steps:
@@ -17,7 +18,8 @@ jobs:
       with:
         python-version: '3.x'
 
-  Setup-Database-and-its-dependencies:
+  database-installation-setup:
+    name: Setup Database and its dependencies
     runs-on: ubuntu-latest
 
     steps:
@@ -39,7 +41,8 @@ jobs:
     - name: Start MongoDB
       run:  sudo systemctl start mongod
 
-  Setup-Python-Environment/Installation-of-Packages:
+  install-server-dependent-packages-run-pytest:
+    name: Setup-Python-Environment/Installation-of-Packages
     runs-on: ubuntu-latest
 
     steps:
