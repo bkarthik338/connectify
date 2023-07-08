@@ -45,6 +45,7 @@ jobs:
     - name: Mongo Sheell
       run: |
             sudo systemctl status mongod
+            ps aux | grep mongod
             
     - name: Running Pytest Testcases
       run: pytest tests/test*
