@@ -50,7 +50,7 @@ jobs:
 
     - name: Mongo Sheell
       run: |
-            mongo
+            mongod
             use admin
             db.getUsers()
             
