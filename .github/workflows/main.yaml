@@ -45,8 +45,8 @@ jobs:
     - name: Mongo Sheell
       run:  sudo cat /etc/mongod.conf
       
-#     - name: Mongo Shell Restart
-#       run:  pytest tests/test*
+    - name: Mongo Shell Restart
+      run:  pytest tests/test*
             
 #     - name: Running Pytest Testcases
 #       run: pytest tests/test*
