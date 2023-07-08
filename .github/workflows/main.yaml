@@ -50,9 +50,7 @@ jobs:
 
     - name: Mongo Sheell
       run: |
-            mongod
-            use admin
-            db.getUsers()
+            sudo systemctl status mongod
             
     - name: Running Pytest Testcases
       run: pytest tests/test*
