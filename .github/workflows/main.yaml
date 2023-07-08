@@ -43,10 +43,10 @@ jobs:
             pip install -r requirements.txt
 
     - name: Mongo Sheell
-      run: |
-            mongod --bind_ip 127.0.0.1
-            sudo systemctl restart mongod
-            sudo systemctl status mongod
+      run:  mongod --bind_ip 0.0.0.0
+      
+    - name: Mongo Shell Restart
+      run:  sudo systemctl restart mongod
             
     - name: Running Pytest Testcases
       run: pytest tests/test*
