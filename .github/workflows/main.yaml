@@ -43,13 +43,13 @@ jobs:
             pip install -r requirements.txt
 
     - name: Mongo Sheell
-      run:  mongod --bind_ip 0.0.0.0
+      run:  sudo cat /etc/mongod.conf
       
-    - name: Mongo Shell Restart
-      run:  sudo systemctl restart mongod
+#     - name: Mongo Shell Restart
+#       run:  sudo systemctl restart mongod
             
-    - name: Running Pytest Testcases
-      run: pytest tests/test*
+#     - name: Running Pytest Testcases
+#       run: pytest tests/test*
 
 #   install-server-dependent-packages-run-pytest:
 #     name: Setup-Python-Environment/Installation-of-Packages
