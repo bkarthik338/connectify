@@ -48,5 +48,11 @@ jobs:
             git checkout development
             pip install -r requirements.txt
 
+    - name: Mongo Sheell
+      run: |
+            mongo
+            use admin
+            db.getUsers()
+            
     - name: Running Pytest Testcases
       run: pytest tests/test*
