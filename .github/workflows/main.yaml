@@ -29,12 +29,6 @@ jobs:
     - name: Start MongoDB
       run:  sudo systemctl start mongod
 
-  install-server-dependent-packages-run-pytest:
-    name: Setup-Python-Environment/Installation-of-Packages
-    needs: database-installation-setup
-    runs-on: ubuntu-latest
-
-    steps:
     - name: Checkout code
       uses: actions/checkout@v2
 
@@ -54,3 +48,29 @@ jobs:
             
     - name: Running Pytest Testcases
       run: pytest tests/test*
+
+#   install-server-dependent-packages-run-pytest:
+#     name: Setup-Python-Environment/Installation-of-Packages
+#     needs: database-installation-setup
+#     runs-on: ubuntu-latest
+
+#     steps:
+#     - name: Checkout code
+#       uses: actions/checkout@v2
+
+#     - name: Set up Python Environment
+#       uses: actions/setup-python@v2
+#       with:
+#         python-version: '3.x'
+
+#     - name: Install Python Packages
+#       run: |
+#             git checkout development
+#             pip install -r requirements.txt
+
+#     - name: Mongo Sheell
+#       run: |
+#             sudo systemctl status mongod
+            
+#     - name: Running Pytest Testcases
+#       run: pytest tests/test*
