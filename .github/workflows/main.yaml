@@ -46,7 +46,7 @@ jobs:
       run:  sudo cat /etc/mongod.conf
       
 #     - name: Mongo Shell Restart
-#       run:  sudo systemctl restart mongod
+#       run:  pytest tests/test*
             
 #     - name: Running Pytest Testcases
 #       run: pytest tests/test*
