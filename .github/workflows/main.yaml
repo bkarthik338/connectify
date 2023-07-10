@@ -29,6 +29,15 @@ jobs:
     - name: Start MongoDB
       run:  sudo systemctl start mongod
 
+    - name: Set runner OS
+      id: set_runner_os
+      run: echo "::set-output name=runner_os::$(uname -s)"
+
+
+  install-server-dependent-packages:
+      name: Setup Python Environment/Packages
+      runs-on: ${{ needs.database-installation-setup.outputs.runner_os }}
+
     - name: Checkout code
       uses: actions/checkout@v2
 
@@ -42,14 +51,12 @@ jobs:
             git checkout development
             pip install -r requirements.txt
 
-    - name: Mongo Sheell
-      run: |
-            mongod --bind_ip 127.0.0.1
-            sudo systemctl status mongod
-            ps aux | grep mongod
+  run-pytest-user-testcases:
+    name: Running Test Cases for User Module
+    runs-on: ${{ needs.database-installation-setup.outputs.runner_os }}
 
-    - name: Running Pytest Testcases
-      run: pytest tests/test*
+    - name: User Test Cases
+      run: pytest tests/test_user.py
 
 #   install-server-dependent-packages-run-pytest:
 #     name: Setup-Python-Environment/Installation-of-Packages
