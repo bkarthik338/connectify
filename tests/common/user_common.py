@@ -47,11 +47,11 @@ def create_test_user(testcase: str) -> CreateUserResponse:
     return response
 
 
-def get_test_user() -> GetUserResponse:
+def get_test_user(testcase: str) -> GetUserResponse:
     """
     This function is to get test user
     """
-    data = load_user_json_file()["getTestUser"]
+    data = load_user_json_file()[testcase]
     userQueryInstance = UserQuery()
     response = userQueryInstance.getuser(Info, username=data["username"])
     return response

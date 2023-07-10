@@ -37,3 +37,11 @@ class GetUserResponse:
 class GetUserFailureResponse:
     error: str
     success: bool
+
+
+# LoginAPI Success/Failure Response
+@strawberry.type
+class LoginResponse:
+    msg: str
+    success: bool
+    token: str = None

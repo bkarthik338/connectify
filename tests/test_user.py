@@ -5,6 +5,7 @@ from .common.user_common import delete_test_user
 from .common.user_common import get_test_user
 from models.user_model import CreateUserResponse
 from models.user_model import DeleteUserResponse
+from models.user_model import GetUserFailureResponse
 from models.user_model import GetUserResponse
 
 
@@ -57,10 +58,21 @@ def test_getuser():
     """
     This testcase is to check get user api
     """
-    response = get_test_user()
+    response = get_test_user("getTestUser")
     assert isinstance(response, GetUserResponse)
     assert response.success
     assert response.data.username == "testuser"
+
+
+def test_getusernotexist():
+    """
+    This testcase is to check get user api
+    which doesn't exist
+    """
+    response = get_test_user("getTestUserDoesnotExist")
+    assert isinstance(response, GetUserFailureResponse)
+    assert not response.success
+    assert response.error.startswith("Invalid User id")
 
 
 def test_deleteuser():
