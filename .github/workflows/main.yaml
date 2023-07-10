@@ -1,0 +1,47 @@
+name: Pytest API TestCases Workflow
+
+on:
+  pull_request:
+    branches:
+      - development
+
+
+jobs:
+  installing-packages-and-testing-application:
+    name: Setup Environment And Testing
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Prerequisites for MongoDB
+        run: sudo apt-get install gnupg
+
+      - name: Import the MongoDB public GPG Key
+        run: wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -
+
+      - name: Creating a list file for MongoDB
+        run: echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list
+
+      - name: Updating the package list
+        run: sudo apt update
+
+      - name: Install MongoDB Package
+        run: sudo apt install -y mongodb-org
+
+      - name: Start MongoDB
+        run: sudo systemctl start mongod
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python Environment
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install Python Packages
+        run: |
+          git checkout development
+          pip install -r requirements.txt
+
+      - name: User Test Cases
+        run: pytest tests/test_user.py

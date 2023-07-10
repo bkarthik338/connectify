@@ -11,7 +11,7 @@ def validate_username(username):
 
 def validate_email(email):
     # Regex pattern for email validation
-    pattern = r"^[\w\.-]+@[\w\.-]+\.\w+$"
+    pattern = r"^[\w\.-]+@([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$"
     return re.match(pattern, email) is not None
 
 

@@ -14,8 +14,10 @@ from query.user_query import UserQuery
 load_dotenv()
 Info = None
 base_url = os.environ.get("BASE_URL")
-cwd = os.getcwd()
-user_json_file_path = os.path.join(cwd, "testdata/user_testcases.json")
+current_dir = os.path.dirname(os.path.abspath(__file__))
+user_json_file_path = os.path.join(
+    current_dir, "../testdata/user_testcases.json"
+)
 
 
 def load_user_json_file():
@@ -27,11 +29,14 @@ def load_user_json_file():
     return data
 
 
-def create_test_user() -> CreateUserResponse:
+def create_test_user(testcase: str) -> CreateUserResponse:
     """
     This function is to create test user.
+    Parameters are passed for negative test cases
+    :Invalid Username/Email
     """
-    data = load_user_json_file()["createTestUser"]
+    data = load_user_json_file()[testcase]
+    print("Inside Create test user")
     userMutationInstance = UserMutation()
     response = userMutationInstance.create_user(
         Info,
@@ -52,12 +57,12 @@ def get_test_user() -> GetUserResponse:
     return response
 
 
-def delete_test_user() -> DeleteUserResponse:
+def delete_test_user(testcase: str) -> DeleteUserResponse:
     """
     This function is to delete created test user and testing
     the api as well
     """
-    data = load_user_json_file()["deleteTestUser"]
+    data = load_user_json_file()[testcase]
     userMutationInstance = UserMutation()
     response = userMutationInstance.delete_user(
         Info, username=data["username"]
