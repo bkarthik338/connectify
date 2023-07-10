@@ -3,9 +3,9 @@ import pytest
 from .common.user_common import create_test_user
 from .common.user_common import delete_test_user
 from .common.user_common import get_test_user
-from mutation.user_mutation import CreateUserResponse
-from mutation.user_mutation import DeleteUserResponse
-from query.user_query import GetUserResponse
+from models.user_model import CreateUserResponse
+from models.user_model import DeleteUserResponse
+from models.user_model import GetUserResponse
 
 
 def test_createuser():

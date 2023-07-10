@@ -3,21 +3,11 @@ import strawberry
 from bson import ObjectId
 
 from database import db
-from model import User
+from models.user_model import GetUserFailureResponse
+from models.user_model import GetUserResponse
+from models.user_model import User
 
 user_collection = db["user"]
-
-
-@strawberry.type
-class GetUserResponse:
-    data: User
-    success: bool
-
-
-@strawberry.type
-class GetUserFailureResponse:
-    error: str
-    success: bool
 
 
 @strawberry.type
