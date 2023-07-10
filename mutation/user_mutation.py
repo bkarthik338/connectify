@@ -3,23 +3,13 @@ import strawberry
 from bson import ObjectId
 
 from database import db
+from models.user_model import CreateUserResponse
+from models.user_model import DeleteUserResponse
 from utility.user_utility import hashing_password
 from utility.user_utility import validate_email
 from utility.user_utility import validate_username
 
 user_collection = db["user"]
-
-
-@strawberry.type
-class CreateUserResponse:
-    success: bool
-    msg: str
-
-
-@strawberry.type
-class DeleteUserResponse:
-    success: bool
-    msg: str
 
 
 @strawberry.type

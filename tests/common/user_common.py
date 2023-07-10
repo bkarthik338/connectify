@@ -3,10 +3,10 @@ import os
 
 from dotenv import load_dotenv
 
-from mutation.user_mutation import CreateUserResponse
-from mutation.user_mutation import DeleteUserResponse
+from models.user_model import CreateUserResponse
+from models.user_model import DeleteUserResponse
+from models.user_model import GetUserResponse
 from mutation.user_mutation import UserMutation
-from query.user_query import GetUserResponse
 from query.user_query import UserQuery
 
 
