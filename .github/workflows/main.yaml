@@ -28,6 +28,8 @@ jobs:
 
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
 
       - name: Set up Python Environment
         uses: actions/setup-python@v2
@@ -36,9 +38,6 @@ jobs:
 
       - name: Install Python Packages
         run: |
-          base_branch="${{ github.event.pull_request.base.ref }}"
-          git fetch origin $base_branch:$base_branch
-          git checkout $base_branch
           pip install -r requirements.txt
 
       - name: User Test Cases
