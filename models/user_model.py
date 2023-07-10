@@ -45,3 +45,9 @@ class LoginResponse:
     msg: str
     success: bool
     token: str = None
+
+#User Update API
+@strawberry.type
+class UpdateUserResponse:
+    msg: str
+    success: bool
