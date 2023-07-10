@@ -3,10 +3,12 @@ import pytest
 from .common.user_common import create_test_user
 from .common.user_common import delete_test_user
 from .common.user_common import get_test_user
+from .common.user_common import login_test_user
 from models.user_model import CreateUserResponse
 from models.user_model import DeleteUserResponse
 from models.user_model import GetUserFailureResponse
 from models.user_model import GetUserResponse
+from models.user_model import LoginResponse
 
 
 def test_createuser():
@@ -52,6 +54,39 @@ def test_createuserinvalidemail():
     assert isinstance(response, CreateUserResponse)
     assert not response.success
     assert response.msg.startswith("Invalid Email")
+
+
+def test_loginuservalid():
+    """
+    This testcase is to check the login api where parameters
+    are valid username and password
+    """
+    response = login_test_user("loginTestUserValid")
+    assert isinstance(response, LoginResponse)
+    assert response.success
+    assert response.msg.startswith("Login Successful")
+
+
+def test_loginuserinvalidusername():
+    """
+    This testcase is to check the login api where parameters
+    are Invalid username and password (Not registered)
+    """
+    response = login_test_user("loginTestUserInvalidUsername")
+    assert isinstance(response, LoginResponse)
+    assert not response.success
+    assert response.msg.startswith("Login Failure Invalid Username")
+
+
+def test_loginuserpasswordmismatch():
+    """
+    This testcase is to check the login api where parameters
+    are Invalid username and password (Not registered)
+    """
+    response = login_test_user("loginTestUserPasswordMismatch")
+    assert isinstance(response, LoginResponse)
+    assert not response.success
+    assert response.msg.startswith("Incorrect Password")
 
 
 def test_getuser():

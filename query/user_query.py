@@ -47,7 +47,8 @@ class UserQuery:
             )
         if not bcrypt.checkpw(password.encode("utf-8"), user_data["password"]):
             return LoginResponse(
-                msg="Invalid Username/Password", success=False
+                msg=f"Incorrect Password for username: {username}",
+                success=False,
             )
         generated_token = generate_jwt_token(
             {"user_id": str(user_data["_id"])}
