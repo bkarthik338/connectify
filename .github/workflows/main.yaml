@@ -6,8 +6,8 @@ on:
       - development
 
 jobs:
-  database-installation-setup:
-    name: Setup Database and its dependencies
+  installing-packages-and-testing-application:
+    name: Setup Environment And Testing
     runs-on: ubuntu-latest
 
     steps:
@@ -29,16 +29,6 @@ jobs:
       - name: Start MongoDB
         run: sudo systemctl start mongod
 
-      - name: Set runner OS
-        id: set_runner_os
-        run: echo "$(uname -s)" >> $GITHUB_ENV
-
-
-  install-server-dependent-packages:
-    name: Setup Python Environment/Packages
-    runs-on: ${{ env.RUNNER_OS }}
-
-    steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
@@ -52,11 +42,5 @@ jobs:
           git checkout development
           pip install -r requirements.txt
 
-
-  run-pytest-user-testcases:
-    name: Running Test Cases for User Module
-    runs-on: ${{ env.RUNNER_OS }}
-
-    steps:
       - name: User Test Cases
         run: pytest tests/test_user.py
