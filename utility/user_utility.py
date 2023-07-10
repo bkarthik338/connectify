@@ -1,6 +1,7 @@
 import re
 
 import bcrypt
+import jwt
 
 
 def validate_username(username):
@@ -19,3 +20,12 @@ def hashing_password(password):
     salt = bcrypt.gensalt(rounds=12, prefix=b"2a")
     hashed_password = bcrypt.hashpw(password.encode("utf-8"), salt)
     return hashed_password
+
+
+def generate_jwt_token(payload, secret_key="jwt-secret-key"):
+    """
+    payload: Dict
+    ex: {"user_id": 123, "exp": 1630425600}
+    """
+    token = jwt.encode(payload, secret_key, algorithm="HS256")
+    return token
