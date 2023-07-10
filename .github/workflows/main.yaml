@@ -5,6 +5,7 @@ on:
     branches:
       - development
 
+
 jobs:
   installing-packages-and-testing-application:
     name: Setup Environment And Testing
@@ -39,7 +40,7 @@ jobs:
 
       - name: Install Python Packages
         run: |
-          git checkout ${{ github.event.pull_request.base.ref }}
+          git checkout development
           pip install -r requirements.txt
 
       - name: User Test Cases
