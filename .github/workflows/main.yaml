@@ -5,7 +5,6 @@ on:
     branches:
       - development
 
-
 jobs:
   installing-packages-and-testing-application:
     name: Setup Environment And Testing
@@ -27,9 +26,6 @@ jobs:
       - name: Install MongoDB Package
         run: sudo apt install -y mongodb-org
 
-      - name: Start MongoDB
-        run: sudo systemctl start mongod
-
       - name: Checkout code
         uses: actions/checkout@v2
 
@@ -40,7 +36,9 @@ jobs:
 
       - name: Install Python Packages
         run: |
-          git checkout development
+          base_branch="${{ github.event.pull_request.base.ref }}"
+          git fetch origin $base_branch:$base_branch
+          git checkout $base_branch
           pip install -r requirements.txt
 
       - name: User Test Cases
