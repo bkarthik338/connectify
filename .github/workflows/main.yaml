@@ -1,9 +1,10 @@
-name: CI/CD Testing
+name: Pytest API TestCases Workflow
 
 on:
-  push:
+  pull_request:
     branches:
       - development
+
 
 jobs:
   installing-packages-and-testing-application:
