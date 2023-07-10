@@ -18,7 +18,6 @@ class UserMutation:
     def create_user(
         self, info, username: str, email: str, password: str
     ) -> CreateUserResponse:
-        print("db:\n", db)
         if user_collection.find_one({"username": username}):
             return CreateUserResponse(
                 msg=f"Username Already Exists: {username}", success=False
