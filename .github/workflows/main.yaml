@@ -31,12 +31,12 @@ jobs:
 
       - name: Set runner OS
         id: set_runner_os
-        run: echo "::set-output name=runner_os::$(uname -s)"
+        run: echo "$(uname -s)" >> $GITHUB_ENV
 
 
   install-server-dependent-packages:
     name: Setup Python Environment/Packages
-    runs-on: ${{ needs.database-installation-setup.outputs.runner_os }}
+    runs-on: ${{ env.RUNNER_OS }}
 
     steps:
       - name: Checkout code
@@ -55,7 +55,7 @@ jobs:
 
   run-pytest-user-testcases:
     name: Running Test Cases for User Module
-    runs-on: ${{ needs.database-installation-setup.outputs.runner_os }}
+    runs-on: ${{ env.RUNNER_OS }}
 
     steps:
       - name: User Test Cases
