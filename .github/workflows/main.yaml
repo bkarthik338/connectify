@@ -11,75 +11,52 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: prerequisites for MongoDB
-      run:  sudo apt-get install gnupg
+      - name: Prerequisites for MongoDB
+        run: sudo apt-get install gnupg
 
-    - name: Import the MongoDB public GPG Key
-      run:  wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -
+      - name: Import the MongoDB public GPG Key
+        run: wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -
 
-    - name: Creating a list file for MongoDB
-      run:  echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list
+      - name: Creating a list file for MongoDB
+        run: echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list
 
-    - name: Updating the package list
-      run:  sudo apt update
+      - name: Updating the package list
+        run: sudo apt update
 
-    - name: Install MongoDB Package
-      run:  sudo apt install -y mongodb-org
+      - name: Install MongoDB Package
+        run: sudo apt install -y mongodb-org
 
-    - name: Start MongoDB
-      run:  sudo systemctl start mongod
+      - name: Start MongoDB
+        run: sudo systemctl start mongod
 
-    - name: Set runner OS
-      id: set_runner_os
-      run: echo "::set-output name=runner_os::$(uname -s)"
+      - name: Set runner OS
+        id: set_runner_os
+        run: echo "::set-output name=runner_os::$(uname -s)"
 
 
   install-server-dependent-packages:
-      name: Setup Python Environment/Packages
-      runs-on: ${{ needs.database-installation-setup.outputs.runner_os }}
+    name: Setup Python Environment/Packages
+    runs-on: ${{ needs.database-installation-setup.outputs.runner_os }}
 
-    - name: Checkout code
-      uses: actions/checkout@v2
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Set up Python Environment
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.x'
+      - name: Set up Python Environment
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
 
-    - name: Install Python Packages
-      run: |
-            git checkout development
-            pip install -r requirements.txt
+      - name: Install Python Packages
+        run: |
+          git checkout development
+          pip install -r requirements.txt
+
 
   run-pytest-user-testcases:
     name: Running Test Cases for User Module
     runs-on: ${{ needs.database-installation-setup.outputs.runner_os }}
 
-    - name: User Test Cases
-      run: pytest tests/test_user.py
-
-#   install-server-dependent-packages-run-pytest:
-#     name: Setup-Python-Environment/Installation-of-Packages
-#     needs: database-installation-setup
-#     runs-on: ubuntu-latest
-
-#     steps:
-#     - name: Checkout code
-#       uses: actions/checkout@v2
-
-#     - name: Set up Python Environment
-#       uses: actions/setup-python@v2
-#       with:
-#         python-version: '3.x'
-
-#     - name: Install Python Packages
-#       run: |
-#             git checkout development
-#             pip install -r requirements.txt
-
-#     - name: Mongo Sheell
-#       run: |
-#             sudo systemctl status mongod
-
-#     - name: Running Pytest Testcases
-#       run: pytest tests/test*
+    steps:
+      - name: User Test Cases
+        run: pytest tests/test_user.py
