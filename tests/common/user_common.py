@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from models.user_model import CreateUserResponse
 from models.user_model import DeleteUserResponse
 from models.user_model import GetUserResponse
+from models.user_model import LoginResponse
 from mutation.user_mutation import UserMutation
 from query.user_query import UserQuery
 
@@ -18,6 +19,11 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 user_json_file_path = os.path.join(
     current_dir, "../testdata/user_testcases.json"
 )
+
+
+# Instances for Query and Mutation Classes
+userMutationInstance = UserMutation()
+userQueryInstance = UserQuery()
 
 
 def load_user_json_file():
@@ -37,7 +43,6 @@ def create_test_user(testcase: str) -> CreateUserResponse:
     """
     data = load_user_json_file()[testcase]
     print("Inside Create test user")
-    userMutationInstance = UserMutation()
     response = userMutationInstance.create_user(
         Info,
         username=data["username"],
@@ -52,7 +57,6 @@ def get_test_user(testcase: str) -> GetUserResponse:
     This function is to get test user
     """
     data = load_user_json_file()[testcase]
-    userQueryInstance = UserQuery()
     response = userQueryInstance.getuser(Info, username=data["username"])
     return response
 
@@ -63,8 +67,18 @@ def delete_test_user(testcase: str) -> DeleteUserResponse:
     the api as well
     """
     data = load_user_json_file()[testcase]
-    userMutationInstance = UserMutation()
     response = userMutationInstance.delete_user(
         Info, username=data["username"]
+    )
+    return response
+
+
+def login_test_user(testcase: str) -> LoginResponse:
+    """
+    This function is to check the login API
+    """
+    data = load_user_json_file()[testcase]
+    response = userQueryInstance.userlogin(
+        Info, username=data["username"], password=data["password"]
     )
     return response
