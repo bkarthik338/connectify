@@ -24,13 +24,15 @@ jobs:
         run: sudo apt update
 
       - name: Install MongoDB Package
-        run: sudo apt install -y mongodb-org
-
-      - name: Start MongoDB
-        run: sudo systemctl start mongod
+        run: |
+              sudo apt install -y mongodb-org
+              sudo systemctl start mongod
+              cat /etc/mongod.conf
 
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
 
       - name: Set up Python Environment
         uses: actions/setup-python@v2
@@ -39,7 +41,6 @@ jobs:
 
       - name: Install Python Packages
         run: |
-          git checkout ${{ github.event.pull_request.base.ref }}
           pip install -r requirements.txt
 
       - name: User Test Cases
