@@ -3,6 +3,7 @@ from typing import Optional
 
 import strawberry
 
+
 # User Model
 @strawberry.type
 class User:
