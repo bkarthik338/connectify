@@ -1,4 +1,8 @@
 # File contains the query class functions GET
+from datetime import datetime
+from datetime import timedelta
+from typing import Any
+
 import bcrypt
 import strawberry
 from bson import ObjectId
@@ -9,6 +13,7 @@ from models.user_model import GetUserResponse
 from models.user_model import LoginResponse
 from models.user_model import User
 from utility.user_utility import generate_jwt_token
+from utility.user_utility import verify_user_token
 
 user_collection = db["user"]
 
@@ -17,28 +22,30 @@ user_collection = db["user"]
 class UserQuery:
     @strawberry.field
     def getuser(
-        self, info, id: strawberry.ID = None, username: str = None
+        self, info, token: str
     ) -> strawberry.union(
         "getUserFieldUnion", [GetUserResponse, GetUserFailureResponse]
     ):
-        query = {"_id": ObjectId(id)} if id else {"username": username}
-        user_data = user_collection.find_one(query)
-        if user_data:
-            return GetUserResponse(
-                data=User(
-                    id=str(user_data["_id"]),
-                    username=user_data["username"],
-                    email=user_data["email"],
-                ),
-                success=True,
+        response = verify_user_token(token=token)
+        if not response["success"]:
+            return GetUserFailureResponse(
+                error=response["response"], success=False
             )
-        return GetUserFailureResponse(
-            error=f"Invalid User id: {id} or username: {username}",
-            success=False,
+        query = {"_id": ObjectId(response["response"]["user_id"])}
+        user_data = user_collection.find_one(query)
+        return GetUserResponse(
+            data=User(
+                id=str(user_data["_id"]),
+                username=user_data["username"],
+                email=user_data["email"],
+            ),
+            success=True,
         )
 
     @strawberry.field
-    def userlogin(self, info, username: str, password: str) -> LoginResponse:
+    def userlogin(
+        self, info, username: str, password: str, exp_time: Any = None
+    ) -> LoginResponse:
         user_data = user_collection.find_one({"username": username})
         if not user_data:
             return LoginResponse(
@@ -50,8 +57,10 @@ class UserQuery:
                 msg=f"Incorrect Password for username: {username}",
                 success=False,
             )
+        if not exp_time:
+            exp_time = datetime.utcnow() + timedelta(days=1)
         generated_token = generate_jwt_token(
-            {"user_id": str(user_data["_id"])}
+            {"user_id": str(user_data["_id"]), "exp": exp_time}
         )
         return LoginResponse(
             msg="Login Successful", success=True, token=generated_token
