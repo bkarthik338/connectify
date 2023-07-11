@@ -9,6 +9,7 @@ from models.user_model import GetUserResponse
 from models.user_model import LoginResponse
 from models.user_model import User
 from utility.user_utility import generate_jwt_token
+from utility.user_utility import verify_user_token
 
 user_collection = db["user"]
 
@@ -17,25 +18,27 @@ user_collection = db["user"]
 class UserQuery:
     @strawberry.field
     def getuser(
-        self, info, id: strawberry.ID = None, username: str = None
+        self, info, token: str
     ) -> strawberry.union(
         "getUserFieldUnion", [GetUserResponse, GetUserFailureResponse]
     ):
-        query = {"_id": ObjectId(id)} if id else {"username": username}
-        user_data = user_collection.find_one(query)
-        if user_data:
-            return GetUserResponse(
-                data=User(
-                    id=str(user_data["_id"]),
-                    username=user_data["username"],
-                    email=user_data["email"],
-                ),
-                success=True,
+        response = verify_user_token(token=token)
+        if not response["success"]:
+            return GetUserFailureResponse(
+                error=response["response"],
+                success=False
             )
-        return GetUserFailureResponse(
-            error=f"Invalid User id: {id} or username: {username}",
-            success=False,
+        query = {"_id": ObjectId(response["response"]["user_id"])}
+        user_data = user_collection.find_one(query)
+        return GetUserResponse(
+            data=User(
+                id=str(user_data["_id"]),
+                username=user_data["username"],
+                email=user_data["email"],
+            ),
+            success=True,
         )
+
 
     @strawberry.field
     def userlogin(self, info, username: str, password: str) -> LoginResponse:
