@@ -1,3 +1,6 @@
+import dataclasses
+from typing import Optional
+
 import strawberry
 
 
@@ -46,8 +49,20 @@ class LoginResponse:
     success: bool
     token: str = None
 
-#User Update API
+
+# User Update API
 @strawberry.type
 class UpdateUserResponse:
     msg: str
     success: bool
+
+
+# Update User Input
+@strawberry.input
+class UpdateUserInput:
+    email: Optional[str] = None
+    phone_number: Optional[str] = None
+    name: Optional[str] = None
+
+    def to_dict(self) -> dict:
+        return dataclasses.asdict(self)

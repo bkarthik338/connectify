@@ -13,7 +13,7 @@ from models.user_model import GetUserFailureResponse
 from models.user_model import GetUserResponse
 from models.user_model import LoginResponse
 
-loggedinuserobject = None
+loggedinusertoken = None
 
 
 def test_createuser():
@@ -66,19 +66,19 @@ def test_loginuservalid():
     This testcase is to check the login api where parameters
     are valid username and password
     """
-    global loggedinuserobject
+    global loggedinusertoken
     response = login_test_user("loginTestUserValid")
     assert isinstance(response, LoginResponse)
     assert response.success
     assert response.msg.startswith("Login Successful")
-    loggedinuserobject = response.token
+    loggedinusertoken = response.token
 
 
 def test_getuser():
     """
     This testcase is to check get user api
     """
-    response = get_test_user(loggedinuserobject)
+    response = get_test_user(loggedinusertoken)
     assert isinstance(response, GetUserResponse)
     assert response.success
     assert response.data.username == "testuser"
@@ -106,17 +106,6 @@ def test_loginuserpasswordmismatch():
     assert response.msg.startswith("Incorrect Password")
 
 
-def test_getuserinvalidtoken():
-    """
-    This testcase is to check get user api
-    which doesn't exist
-    """
-    response = get_test_user(token="12345")
-    assert isinstance(response, GetUserFailureResponse)
-    assert not response.success
-    assert response.error.startswith("Invalid Token")
-
-
 def test_getuserexpiredtoken():
     """
     This testcase is to check get user api
@@ -128,6 +117,17 @@ def test_getuserexpiredtoken():
     assert isinstance(response, GetUserFailureResponse)
     assert not response.success
     assert response.error.startswith("Token has expired")
+
+
+def test_getuserinvalidtoken():
+    """
+    This testcase is to check get user api
+    which doesn't exist
+    """
+    response = get_test_user(token="12345")
+    assert isinstance(response, GetUserFailureResponse)
+    assert not response.success
+    assert response.error.startswith("Invalid Token")
 
 
 def test_deleteuser():
