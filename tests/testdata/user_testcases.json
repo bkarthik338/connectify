@@ -6,8 +6,6 @@
     "loginTestUserValid": {"username": "testuser", "password": "password"},
     "loginTestUserInvalidUsername": {"username": "12", "password": "password"},
     "loginTestUserPasswordMismatch":{"username": "testuser", "password": "incorrectpassword"},
-    "getTestUser": {"username": "testuser"},
-    "getTestUserDoesnotExist": {"username": "invalidusername"},
     "deleteTestUser": {"username": "testuser"},
     "deleteTestUserDontExists": {"username": "1234567"}
 }

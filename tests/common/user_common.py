@@ -1,5 +1,6 @@
 import json
 import os
+from typing import Any
 
 from dotenv import load_dotenv
 
@@ -52,12 +53,11 @@ def create_test_user(testcase: str) -> CreateUserResponse:
     return response
 
 
-def get_test_user(testcase: str) -> GetUserResponse:
+def get_test_user(token: str) -> GetUserResponse:
     """
     This function is to get test user
     """
-    data = load_user_json_file()[testcase]
-    response = userQueryInstance.getuser(Info, username=data["username"])
+    response = userQueryInstance.getuser(Info, token)
     return response
 
 
@@ -73,12 +73,15 @@ def delete_test_user(testcase: str) -> DeleteUserResponse:
     return response
 
 
-def login_test_user(testcase: str) -> LoginResponse:
+def login_test_user(testcase: str, exp_time: Any = None) -> LoginResponse:
     """
     This function is to check the login API
     """
     data = load_user_json_file()[testcase]
     response = userQueryInstance.userlogin(
-        Info, username=data["username"], password=data["password"]
+        Info,
+        username=data["username"],
+        password=data["password"],
+        exp_time=exp_time,
     )
     return response
