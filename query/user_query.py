@@ -1,7 +1,6 @@
 # File contains the query class functions GET
 from datetime import datetime
 from datetime import timedelta
-from typing import Any
 
 import bcrypt
 import strawberry
@@ -44,7 +43,7 @@ class UserQuery:
 
     @strawberry.field
     def userlogin(
-        self, info, username: str, password: str, exp_time: Any = None
+        self, info, username: str, password: str, exp_time: datetime = None
     ) -> LoginResponse:
         user_data = user_collection.find_one({"username": username})
         if not user_data:
