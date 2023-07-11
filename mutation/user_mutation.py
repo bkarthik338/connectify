@@ -2,13 +2,16 @@
 import strawberry
 from bson import ObjectId
 
+from constants import UPDATE_USER_TABLE_KEYS
 from database import db
 from models.user_model import CreateUserResponse
 from models.user_model import DeleteUserResponse
+from models.user_model import UpdateUserInput
+from models.user_model import UpdateUserResponse
 from utility.user_utility import hashing_password
 from utility.user_utility import validate_email
 from utility.user_utility import validate_username
-from models.user_model import UpdateUserResponse
+from utility.user_utility import verify_user_token
 
 user_collection = db["user"]
 
@@ -54,17 +57,29 @@ class UserMutation:
             )
         _ = user_collection.delete_one(query)
         return DeleteUserResponse(msg="User is deleted.", success=True)
-    
 
     @strawberry.mutation
     def update_user(
-        self, info, username: str, email: str = None
+        self, info, token: str, user_input: UpdateUserInput
     ) -> UpdateUserResponse:
-        query = {"username": username}
-        user_data = user_collection.find_one(query)
-        if not user_data:
-            return UpdateUserResponse(msg="Invalid Username", success=False)
-        updated_obj = user_collection.update_one(query, {"$set": {"email": email}})
+        response = verify_user_token(token=token)
+        if not response["success"]:
+            return UpdateUserResponse(msg=response["response"], success=False)
+        update_dict = {}
+        update_data = user_input.to_dict()
+        for key, value in update_data.items():
+            if key in UPDATE_USER_TABLE_KEYS and value is not None:
+                update_dict[key] = value
+        if not update_dict:
+            return UpdateUserResponse(
+                msg="Invalid data sent for updation", success=False
+            )
+        query = {"_id": ObjectId(response["response"]["user_id"])}
+        updated_obj = user_collection.update_one(query, {"$set": update_dict})
         if not updated_obj.modified_count > 0:
-            return UpdateUserResponse(msg="User Updation Failed", success=False)
-        return UpdateUserResponse(msg="Updated User Successfully", success=True)
+            return UpdateUserResponse(
+                msg="User Updation Failed", success=False
+            )
+        return UpdateUserResponse(
+            msg="Updated User Successfully", success=True
+        )
