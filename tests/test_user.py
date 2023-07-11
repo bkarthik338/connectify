@@ -1,3 +1,6 @@
+from datetime import datetime
+from datetime import timedelta
+
 import pytest
 
 from .common.user_common import create_test_user
@@ -9,6 +12,8 @@ from models.user_model import DeleteUserResponse
 from models.user_model import GetUserFailureResponse
 from models.user_model import GetUserResponse
 from models.user_model import LoginResponse
+
+loggedinuserobject = None
 
 
 def test_createuser():
@@ -61,10 +66,22 @@ def test_loginuservalid():
     This testcase is to check the login api where parameters
     are valid username and password
     """
+    global loggedinuserobject
     response = login_test_user("loginTestUserValid")
     assert isinstance(response, LoginResponse)
     assert response.success
     assert response.msg.startswith("Login Successful")
+    loggedinuserobject = response.token
+
+
+def test_getuser():
+    """
+    This testcase is to check get user api
+    """
+    response = get_test_user(loggedinuserobject)
+    assert isinstance(response, GetUserResponse)
+    assert response.success
+    assert response.data.username == "testuser"
 
 
 def test_loginuserinvalidusername():
@@ -89,25 +106,28 @@ def test_loginuserpasswordmismatch():
     assert response.msg.startswith("Incorrect Password")
 
 
-def test_getuser():
-    """
-    This testcase is to check get user api
-    """
-    response = get_test_user("getTestUser")
-    assert isinstance(response, GetUserResponse)
-    assert response.success
-    assert response.data.username == "testuser"
-
-
-def test_getusernotexist():
+def test_getuserinvalidtoken():
     """
     This testcase is to check get user api
     which doesn't exist
     """
-    response = get_test_user("getTestUserDoesnotExist")
+    response = get_test_user(token="12345")
     assert isinstance(response, GetUserFailureResponse)
     assert not response.success
-    assert response.error.startswith("Invalid User id")
+    assert response.error.startswith("Invalid Token")
+
+
+def test_getuserexpiredtoken():
+    """
+    This testcase is to check get user api
+    which doesn't exist
+    """
+    exp_time = datetime.utcnow() - timedelta(minutes=30)
+    user_login = login_test_user("loginTestUserValid", exp_time=exp_time)
+    response = get_test_user(token=user_login.token)
+    assert isinstance(response, GetUserFailureResponse)
+    assert not response.success
+    assert response.error.startswith("Token has expired")
 
 
 def test_deleteuser():
