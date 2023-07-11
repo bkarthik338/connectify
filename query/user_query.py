@@ -1,4 +1,8 @@
 # File contains the query class functions GET
+from datetime import datetime
+from datetime import timedelta
+from typing import Any
+
 import bcrypt
 import strawberry
 from bson import ObjectId
@@ -25,8 +29,7 @@ class UserQuery:
         response = verify_user_token(token=token)
         if not response["success"]:
             return GetUserFailureResponse(
-                error=response["response"],
-                success=False
+                error=response["response"], success=False
             )
         query = {"_id": ObjectId(response["response"]["user_id"])}
         user_data = user_collection.find_one(query)
@@ -39,9 +42,10 @@ class UserQuery:
             success=True,
         )
 
-
     @strawberry.field
-    def userlogin(self, info, username: str, password: str) -> LoginResponse:
+    def userlogin(
+        self, info, username: str, password: str, exp_time: Any = None
+    ) -> LoginResponse:
         user_data = user_collection.find_one({"username": username})
         if not user_data:
             return LoginResponse(
@@ -53,8 +57,10 @@ class UserQuery:
                 msg=f"Incorrect Password for username: {username}",
                 success=False,
             )
+        if not exp_time:
+            exp_time = datetime.utcnow() + timedelta(days=1)
         generated_token = generate_jwt_token(
-            {"user_id": str(user_data["_id"])}
+            {"user_id": str(user_data["_id"]), "exp": exp_time}
         )
         return LoginResponse(
             msg="Login Successful", success=True, token=generated_token
