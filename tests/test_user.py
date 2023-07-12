@@ -5,6 +5,7 @@ from .common.user_common import delete_test_user
 from .common.user_common import generate_jwt_token_test
 from .common.user_common import get_test_user
 from .common.user_common import login_test_user
+from .common.user_common import reset_password_test_user
 from .common.user_common import update_test_user
 from models.user_model import GeneralResponse
 from models.user_model import GetUserFailureResponse
@@ -197,6 +198,61 @@ def test_updateuserexpiredtoken():
     assert isinstance(response, GeneralResponse)
     assert not response.success
     assert response.msg == "Token has expired"
+
+
+def test_resetpasswordsame():
+    """
+    This testcase is to check reset password api
+    where old and new password's are same
+    """
+    global loggedinusertoken
+    response = reset_password_test_user(
+        "resetPasswordTestUserSame", token=loggedinusertoken
+    )
+    assert isinstance(response, GeneralResponse)
+    assert not response.success
+    assert response.msg == "New Password Should Not Be Same As Old Password"
+
+
+def test_resetpasswordinvalidtoken():
+    """
+    This testcase is to check reset password api
+    where token is invalid
+    """
+    response = reset_password_test_user(
+        "resetPasswordTestUservalid", token="token"
+    )
+    assert isinstance(response, GeneralResponse)
+    assert not response.success
+    assert response.msg == "Invalid Token"
+
+
+def test_resetpasswordinvalidoldpassword():
+    """
+    This testcase is to check reset password api
+    where old password is incorrect
+    """
+    global loggedinusertoken
+    response = reset_password_test_user(
+        "resetPasswordTestUserInvalidOldPassword", token=loggedinusertoken
+    )
+    assert isinstance(response, GeneralResponse)
+    assert not response.success
+    assert response.msg == "Old Password Entered Is Incorrect"
+
+
+def test_resetpasswordvalid():
+    """
+    This testcase is to check reset password api
+    where all the details are valid
+    """
+    global loggedinusertoken
+    response = reset_password_test_user(
+        "resetPasswordTestUservalid", token=loggedinusertoken
+    )
+    assert isinstance(response, GeneralResponse)
+    assert response.success
+    assert response.msg == "Successfully Updated Password"
 
 
 def test_deleteuser():

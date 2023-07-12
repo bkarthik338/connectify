@@ -10,5 +10,8 @@
     "deleteTestUserDontExists": {"username": "1234567"},
     "updateTestUserValid": {"email": "updated_test@example.com", "phone_number": "11223344", "name": "Test User"},
     "updateTestUserSameData": {"email": "updated_test@example.com", "phone_number": "11223344", "name": "Test User"},
-    "updateTestUserInvalid": {"username": "testuser", "password": "password"}
+    "updateTestUserInvalid": {"username": "testuser", "password": "password"},
+    "resetPasswordTestUserSame": {"old_password": "password", "new_password": "password"},
+    "resetPasswordTestUservalid": {"old_password": "password", "new_password": "password1"},
+    "resetPasswordTestUserInvalidOldPassword": {"old_password": "incorrectpassword", "new_password": "password1"}
 }

@@ -114,3 +114,17 @@ def update_test_user(testcase: str, token: str) -> GeneralResponse:
         user_input=UpdateUserInput.from_json(json.dumps(data)),
     )
     return response
+
+
+def reset_password_test_user(testcase: str, token: str) -> GeneralResponse:
+    """
+    This function is to check Reset Password API
+    """
+    data = load_user_json_file()[testcase]
+    response = userMutationInstance.reset_password(
+        Info,
+        token=token,
+        oldPassword=data["old_password"],
+        newPassword=data["new_password"],
+    )
+    return response
