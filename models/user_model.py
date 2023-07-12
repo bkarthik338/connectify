@@ -16,14 +16,7 @@ class User:
 
 # SignUP API Response
 @strawberry.type
-class CreateUserResponse:
-    success: bool
-    msg: str
-
-
-# Delete User API Response
-@strawberry.type
-class DeleteUserResponse:
+class GeneralResponse:
     success: bool
     msg: str
 
@@ -49,13 +42,6 @@ class LoginResponse:
     msg: str
     success: bool
     token: str = None
-
-
-# User Update API
-@strawberry.type
-class UpdateUserResponse:
-    msg: str
-    success: bool
 
 
 # Update User Input

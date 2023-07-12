@@ -6,12 +6,10 @@ from .common.user_common import generate_jwt_token_test
 from .common.user_common import get_test_user
 from .common.user_common import login_test_user
 from .common.user_common import update_test_user
-from models.user_model import CreateUserResponse
-from models.user_model import DeleteUserResponse
+from models.user_model import GeneralResponse
 from models.user_model import GetUserFailureResponse
 from models.user_model import GetUserResponse
 from models.user_model import LoginResponse
-from models.user_model import UpdateUserResponse
 
 
 loggedinusertoken = None
@@ -22,9 +20,8 @@ def test_createuser():
     """
     This testcase is to check create user api
     """
-    print("Starting test: Valid Create User")
     response = create_test_user("createTestUserValid")
-    assert isinstance(response, CreateUserResponse)
+    assert isinstance(response, GeneralResponse)
     assert response.success
     assert response.msg == "User created Successfully: testuser"
 
@@ -35,7 +32,7 @@ def test_createuseralreadyexist():
     for user which already exists
     """
     response = create_test_user("createTestAlreadyExists")
-    assert isinstance(response, CreateUserResponse)
+    assert isinstance(response, GeneralResponse)
     assert not response.success
     assert response.msg.startswith("Username Already Exists")
 
@@ -46,7 +43,7 @@ def test_createuserinvalidusername():
     The Username should have 3-20 characters
     """
     response = create_test_user("createTestUserInvalidUsername")
-    assert isinstance(response, CreateUserResponse)
+    assert isinstance(response, GeneralResponse)
     assert not response.success
     assert response.msg.startswith("Invalid Username")
 
@@ -58,7 +55,7 @@ def test_createuserinvalidemail():
     :user!@example.com (Should not contain !)
     """
     response = create_test_user("createTestUserInvalidEmail")
-    assert isinstance(response, CreateUserResponse)
+    assert isinstance(response, GeneralResponse)
     assert not response.success
     assert response.msg.startswith("Invalid Email")
 
@@ -143,7 +140,7 @@ def test_updateuserdetails():
     """
     global loggedinusertoken
     response = update_test_user("updateTestUserValid", token=loggedinusertoken)
-    assert isinstance(response, UpdateUserResponse)
+    assert isinstance(response, GeneralResponse)
     assert response.success
     assert response.msg == "Updated User Successfully"
 
@@ -157,7 +154,7 @@ def test_updateusersamedetails():
     response = update_test_user(
         "updateTestUserSameData", token=loggedinusertoken
     )
-    assert isinstance(response, UpdateUserResponse)
+    assert isinstance(response, GeneralResponse)
     assert not response.success
     assert response.msg == "User Updation Failed"
 
@@ -172,7 +169,7 @@ def test_updateuserinvaliddetails():
     response = update_test_user(
         "updateTestUserInvalid", token=loggedinusertoken
     )
-    assert isinstance(response, UpdateUserResponse)
+    assert isinstance(response, GeneralResponse)
     assert not response.success
     assert response.msg == "Invalid data sent for updation"
 
@@ -183,7 +180,7 @@ def test_updateuserinvalidtoken():
     where token sent is invalid
     """
     response = update_test_user("updateTestUserInvalid", token="token")
-    assert isinstance(response, UpdateUserResponse)
+    assert isinstance(response, GeneralResponse)
     assert not response.success
     assert response.msg == "Invalid Token"
 
@@ -197,7 +194,7 @@ def test_updateuserexpiredtoken():
         user_id=loggedinuserobjectid, exp_time=True
     )
     response = update_test_user("updateTestUserInvalid", token=token)
-    assert isinstance(response, UpdateUserResponse)
+    assert isinstance(response, GeneralResponse)
     assert not response.success
     assert response.msg == "Token has expired"
 
@@ -207,7 +204,7 @@ def test_deleteuser():
     This testcase is to check delete user api
     """
     response = delete_test_user("deleteTestUser")
-    assert isinstance(response, DeleteUserResponse)
+    assert isinstance(response, GeneralResponse)
     assert response.success
     assert response.msg == "User is deleted."
 
@@ -218,7 +215,7 @@ def test_deleteuserdontexist():
     which doesn't exists
     """
     response = delete_test_user("deleteTestUserDontExists")
-    assert isinstance(response, DeleteUserResponse)
+    assert isinstance(response, GeneralResponse)
     assert not response.success
     assert response.msg == "User is not registered to delete."
 
