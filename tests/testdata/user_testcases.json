@@ -7,5 +7,8 @@
     "loginTestUserInvalidUsername": {"username": "12", "password": "password"},
     "loginTestUserPasswordMismatch":{"username": "testuser", "password": "incorrectpassword"},
     "deleteTestUser": {"username": "testuser"},
-    "deleteTestUserDontExists": {"username": "1234567"}
+    "deleteTestUserDontExists": {"username": "1234567"},
+    "updateTestUserValid": {"email": "updated_test@example.com", "phone_number": "11223344", "name": "Test User"},
+    "updateTestUserSameData": {"email": "updated_test@example.com", "phone_number": "11223344", "name": "Test User"},
+    "updateTestUserInvalid": {"username": "testuser", "password": "password"}
 }

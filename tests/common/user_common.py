@@ -1,5 +1,7 @@
 import json
 import os
+from datetime import datetime
+from datetime import timedelta
 from typing import Any
 
 from dotenv import load_dotenv
@@ -8,8 +10,11 @@ from models.user_model import CreateUserResponse
 from models.user_model import DeleteUserResponse
 from models.user_model import GetUserResponse
 from models.user_model import LoginResponse
+from models.user_model import UpdateUserInput
+from models.user_model import UpdateUserResponse
 from mutation.user_mutation import UserMutation
 from query.user_query import UserQuery
+from utility.user_utility import generate_jwt_token
 
 
 # Load environment variables from .env file
@@ -34,6 +39,19 @@ def load_user_json_file():
     with open(user_json_file_path) as file:
         data = json.load(file)
     return data
+
+
+def create_payload_jwt(user_id: str, exp_time: bool) -> dict:
+    if exp_time:
+        exp_time = datetime.utcnow() - timedelta(minutes=30)
+    else:
+        exp_time = datetime.utcnow() + timedelta(days=1)
+    return {"user_id": user_id, "exp": exp_time}
+
+
+def generate_jwt_token_test(user_id: str, exp_time: bool = False) -> str:
+    payload = create_payload_jwt(user_id=user_id, exp_time=exp_time)
+    return generate_jwt_token(payload)
 
 
 def create_test_user(testcase: str) -> CreateUserResponse:
@@ -83,5 +101,18 @@ def login_test_user(testcase: str, exp_time: Any = None) -> LoginResponse:
         username=data["username"],
         password=data["password"],
         exp_time=exp_time,
+    )
+    return response
+
+
+def update_test_user(testcase: str, token: str) -> UpdateUserResponse:
+    """
+    This fuction is to check Update User API
+    """
+    data = load_user_json_file()[testcase]
+    response = userMutationInstance.update_user(
+        Info,
+        token=token,
+        user_input=UpdateUserInput.from_json(json.dumps(data)),
     )
     return response
