@@ -6,12 +6,10 @@ from typing import Any
 
 from dotenv import load_dotenv
 
-from models.user_model import CreateUserResponse
-from models.user_model import DeleteUserResponse
+from models.user_model import GeneralResponse
 from models.user_model import GetUserResponse
 from models.user_model import LoginResponse
 from models.user_model import UpdateUserInput
-from models.user_model import UpdateUserResponse
 from mutation.user_mutation import UserMutation
 from query.user_query import UserQuery
 from utility.user_utility import generate_jwt_token
@@ -54,7 +52,7 @@ def generate_jwt_token_test(user_id: str, exp_time: bool = False) -> str:
     return generate_jwt_token(payload)
 
 
-def create_test_user(testcase: str) -> CreateUserResponse:
+def create_test_user(testcase: str) -> GeneralResponse:
     """
     This function is to create test user.
     Parameters are passed for negative test cases
@@ -79,7 +77,7 @@ def get_test_user(token: str) -> GetUserResponse:
     return response
 
 
-def delete_test_user(testcase: str) -> DeleteUserResponse:
+def delete_test_user(testcase: str) -> GeneralResponse:
     """
     This function is to delete created test user and testing
     the api as well
@@ -105,7 +103,7 @@ def login_test_user(testcase: str, exp_time: Any = None) -> LoginResponse:
     return response
 
 
-def update_test_user(testcase: str, token: str) -> UpdateUserResponse:
+def update_test_user(testcase: str, token: str) -> GeneralResponse:
     """
     This fuction is to check Update User API
     """
