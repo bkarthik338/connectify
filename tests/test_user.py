@@ -1,19 +1,21 @@
-from datetime import datetime
-from datetime import timedelta
-
 import pytest
 
 from .common.user_common import create_test_user
 from .common.user_common import delete_test_user
+from .common.user_common import generate_jwt_token_test
 from .common.user_common import get_test_user
 from .common.user_common import login_test_user
+from .common.user_common import update_test_user
 from models.user_model import CreateUserResponse
 from models.user_model import DeleteUserResponse
 from models.user_model import GetUserFailureResponse
 from models.user_model import GetUserResponse
 from models.user_model import LoginResponse
+from models.user_model import UpdateUserResponse
+
 
 loggedinusertoken = None
+loggedinuserobjectid = None
 
 
 def test_createuser():
@@ -78,10 +80,12 @@ def test_getuser():
     """
     This testcase is to check get user api
     """
+    global loggedinuserobjectid
     response = get_test_user(loggedinusertoken)
     assert isinstance(response, GetUserResponse)
     assert response.success
     assert response.data.username == "testuser"
+    loggedinuserobjectid = response.data.id
 
 
 def test_loginuserinvalidusername():
@@ -111,9 +115,11 @@ def test_getuserexpiredtoken():
     This testcase is to check get user api
     which doesn't exist
     """
-    exp_time = datetime.utcnow() - timedelta(minutes=30)
-    user_login = login_test_user("loginTestUserValid", exp_time=exp_time)
-    response = get_test_user(token=user_login.token)
+    global loggedinuserobjectid
+    token = generate_jwt_token_test(
+        user_id=loggedinuserobjectid, exp_time=True
+    )
+    response = get_test_user(token=token)
     assert isinstance(response, GetUserFailureResponse)
     assert not response.success
     assert response.error.startswith("Token has expired")
@@ -128,6 +134,72 @@ def test_getuserinvalidtoken():
     assert isinstance(response, GetUserFailureResponse)
     assert not response.success
     assert response.error.startswith("Invalid Token")
+
+
+def test_updateuserdetails():
+    """
+    This testcase is to check update user api
+    using valid data
+    """
+    global loggedinusertoken
+    response = update_test_user("updateTestUserValid", token=loggedinusertoken)
+    assert isinstance(response, UpdateUserResponse)
+    assert response.success
+    assert response.msg == "Updated User Successfully"
+
+
+def test_updateusersamedetails():
+    """
+    This testcase is to check update user api
+    the data to be updated is same as in the database
+    """
+    global loggedinusertoken
+    response = update_test_user(
+        "updateTestUserSameData", token=loggedinusertoken
+    )
+    assert isinstance(response, UpdateUserResponse)
+    assert not response.success
+    assert response.msg == "User Updation Failed"
+
+
+def test_updateuserinvaliddetails():
+    """
+    This testcase is to check update user api
+    where details are invalid like when it has
+    only Username and Password
+    """
+    global loggedinusertoken
+    response = update_test_user(
+        "updateTestUserInvalid", token=loggedinusertoken
+    )
+    assert isinstance(response, UpdateUserResponse)
+    assert not response.success
+    assert response.msg == "Invalid data sent for updation"
+
+
+def test_updateuserinvalidtoken():
+    """
+    This testcase is to check update user api
+    where token sent is invalid
+    """
+    response = update_test_user("updateTestUserInvalid", token="token")
+    assert isinstance(response, UpdateUserResponse)
+    assert not response.success
+    assert response.msg == "Invalid Token"
+
+
+def test_updateuserexpiredtoken():
+    """
+    This testcase is to check update user api
+    where token sent is invalid
+    """
+    token = generate_jwt_token_test(
+        user_id=loggedinuserobjectid, exp_time=True
+    )
+    response = update_test_user("updateTestUserInvalid", token=token)
+    assert isinstance(response, UpdateUserResponse)
+    assert not response.success
+    assert response.msg == "Token has expired"
 
 
 def test_deleteuser():

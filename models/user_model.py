@@ -1,4 +1,5 @@
 import dataclasses
+import json
 from typing import Optional
 
 import strawberry
@@ -66,3 +67,11 @@ class UpdateUserInput:
 
     def to_dict(self) -> dict:
         return dataclasses.asdict(self)
+
+    @classmethod
+    def from_json(cls, json_data: str) -> "UpdateUserInput":
+        data = json.loads(json_data)
+        instance = cls()
+        for key, value in data.items():
+            setattr(instance, key, value)
+        return instance
