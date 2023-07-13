@@ -25,7 +25,6 @@ class UserMutation:
             return GeneralResponse(
                 msg=f"Username Already Exists: {username}", success=False
             )
-        print("Username Check is done")
         if not validate_email(email=email):
             return GeneralResponse(
                 msg=f"Invalid Email: {email}", success=False
