@@ -66,7 +66,7 @@ def test_getallmytweets():
     This test is to check the get all tweets API
     with valid token
     """
-    response = get_all_tweets("getAllTweets", token=loggedinusertoken)
+    response = get_all_tweets(token=loggedinusertoken)
     assert isinstance(response, ListTweetModel)
     assert response.success
 
