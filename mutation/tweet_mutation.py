@@ -12,7 +12,7 @@ tweet_collection = db["tweet"]
 class TweetMutation:
     @strawberry.mutation
     def create_tweet(
-        self, info, token: str, description: str, hashtags: str
+        self, info, token: str, description: str, hashtags: str = None
     ) -> GeneralResponse:
         user_data = verify_user_token(token=token)
         if not user_data["success"]:
