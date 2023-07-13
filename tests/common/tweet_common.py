@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 
 from models.tweet_model import ListTweetModel
 from models.tweet_model import SingleTweetModel
+from models.tweet_model import UpdateTweetInput
 from models.user_model import GeneralResponse
 from mutation.tweet_mutation import TweetMutation
 from query.tweet_query import TweetQuery
@@ -64,5 +65,19 @@ def get_single_tweet(
     """
     response = tweetQueryInstance.get_single_tweet(
         Info, token=token, tweetId=ObjectId(tweet_id)
+    )
+    return response
+
+
+def update_tweet_test(
+    testcase: str, token: str, tweet_id: str
+) -> Union[GeneralResponse, SingleTweetModel]:
+    """
+    This function is to check updateSingleTweet API
+    """
+    test_data = load_tweet_json_file()[testcase]
+    tweetModelInstance = UpdateTweetInput().from_dict(test_data)
+    response = tweetMutationInstance.update_tweet(
+        Info, token=token, tweetId=tweet_id, updateData=tweetModelInstance
     )
     return response
