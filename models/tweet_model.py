@@ -1,10 +1,17 @@
+from typing import List
+
 import strawberry
-from bson import ObjectId
 
 
-# Tweet/Post Database Model
+# Get Tweets Response Model
 @strawberry.type
 class TweetModel:
-    tweet: str
+    id: str
+    description: str
     hashtags: str = None
-    user_id: ObjectId
+
+
+@strawberry.type
+class ListTweetModel:
+    success: bool
+    tweets: List[TweetModel]

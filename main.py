@@ -5,6 +5,7 @@ from strawberry.asgi import GraphQL
 
 from mutation.tweet_mutation import TweetMutation
 from mutation.user_mutation import UserMutation
+from query.tweet_query import TweetQuery
 from query.user_query import UserQuery
 
 app = FastAPI()
@@ -18,7 +19,7 @@ class Mutation(UserMutation, TweetMutation):
 
 # Query Class which imports all the functionalities Query Classes
 @strawberry.type
-class Query(UserQuery):
+class Query(UserQuery, TweetQuery):
     pass
 
 
