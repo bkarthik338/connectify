@@ -1,13 +1,17 @@
 import json
 import os
+from typing import Union
 
 from dotenv import load_dotenv
 
+from models.tweet_model import ListTweetModel
 from models.user_model import GeneralResponse
 from mutation.tweet_mutation import TweetMutation
+from query.tweet_query import TweetQuery
 
 
 tweetMutationInstance = TweetMutation()
+tweetQueryInstance = TweetQuery()
 
 
 load_dotenv()
@@ -39,4 +43,12 @@ def create_post_test(testcase: str, token: str) -> GeneralResponse:
         description=data["description"],
         # hashtags=data["hashtags"]
     )
+    return response
+
+
+def get_all_tweets(token: str) -> Union[GeneralResponse, ListTweetModel]:
+    """
+    This function is to check getAllTweets API
+    """
+    response = tweetQueryInstance.my_tweets(Info, token=token)
     return response

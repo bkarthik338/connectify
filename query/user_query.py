@@ -1,6 +1,7 @@
 # File contains the query class functions GET
 from datetime import datetime
 from datetime import timedelta
+from typing import Union
 
 import bcrypt
 import strawberry
@@ -22,9 +23,7 @@ class UserQuery:
     @strawberry.field
     def getuser(
         self, info, token: str
-    ) -> strawberry.union(
-        "getUserFieldUnion", [GetUserResponse, GetUserFailureResponse]
-    ):
+    ) -> Union[GetUserResponse, GetUserFailureResponse]:
         response = verify_user_token(token=token)
         if not response["success"]:
             return GetUserFailureResponse(
