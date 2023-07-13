@@ -2,14 +2,17 @@ import pytest
 
 from .common.tweet_common import create_post_test
 from .common.tweet_common import get_all_tweets
+from .common.tweet_common import get_single_tweet
 from .common.user_common import create_test_user
 from .common.user_common import delete_test_user
 from .common.user_common import login_test_user
 from models.tweet_model import ListTweetModel
+from models.tweet_model import SingleTweetModel
 from models.user_model import GeneralResponse
 from models.user_model import LoginResponse
 
 loggedinusertoken = None
+tweet_id = None
 
 
 @pytest.fixture(scope="module", autouse=True)
@@ -66,9 +69,13 @@ def test_getallmytweets():
     This test is to check the get all tweets API
     with valid token
     """
+    global tweet_id
+    test_createtweetpost()
     response = get_all_tweets(token=loggedinusertoken)
     assert isinstance(response, ListTweetModel)
     assert response.success
+    assert len(response.tweets) > 0
+    tweet_id = response.tweets[0].id
 
 
 def test_getallmytweetsinvalidtoken():
@@ -77,6 +84,31 @@ def test_getallmytweetsinvalidtoken():
     with invalid token
     """
     response = get_all_tweets(token="token")
+    assert isinstance(response, GeneralResponse)
+    assert not response.success
+    assert response.msg.startswith("Authentication Failed")
+
+
+# TODO Tweet Not Found Test Case
+def test_getsingletweetvalid():
+    """
+    This test is to check the get Single API from
+    Object ID
+    """
+    global tweet_id
+    response = get_single_tweet(token=loggedinusertoken, tweet_id=tweet_id)
+    assert isinstance(response, SingleTweetModel)
+    assert response.success
+    assert response.tweet
+
+
+def test_getsingletweetinvalidtoken():
+    """
+    This test is to check the get Single API from
+    Object ID
+    """
+    global tweet_id
+    response = get_single_tweet(token="token", tweet_id=tweet_id)
     assert isinstance(response, GeneralResponse)
     assert not response.success
     assert response.msg.startswith("Authentication Failed")
