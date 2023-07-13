@@ -46,9 +46,7 @@ def create_post_test(testcase: str, token: str) -> GeneralResponse:
     return response
 
 
-def get_all_tweets(
-    testcase: str, token: str
-) -> Union[GeneralResponse, ListTweetModel]:
+def get_all_tweets(token: str) -> Union[GeneralResponse, ListTweetModel]:
     """
     This function is to check getAllTweets API
     """

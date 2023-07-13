@@ -71,5 +71,16 @@ def test_getallmytweets():
     assert response.success
 
 
+def test_getallmytweetsinvalidtoken():
+    """
+    This test is to check the get all tweets API
+    with invalid token
+    """
+    response = get_all_tweets(token="token")
+    assert isinstance(response, GeneralResponse)
+    assert not response.success
+    assert response.msg.startswith("Authentication Failed")
+
+
 if __name__ == "__main__":
     pytest.main([__file__])
