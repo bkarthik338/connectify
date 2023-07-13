@@ -47,7 +47,7 @@ class TweetMutation:
         data = {}
         update_data = updateData.to_dict()
         for key, value in update_data.items():
-            if (key in TWEET_UPDATE_TABLE_KEYS) and (
+            if key in TWEET_UPDATE_TABLE_KEYS and (
                 value is not None and value != ""
             ):
                 data[key] = value
