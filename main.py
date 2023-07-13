@@ -3,6 +3,7 @@ import uvicorn
 from fastapi import FastAPI
 from strawberry.asgi import GraphQL
 
+from mutation.tweet_mutation import TweetMutation
 from mutation.user_mutation import UserMutation
 from query.user_query import UserQuery
 
@@ -10,11 +11,13 @@ app = FastAPI()
 
 
 # Mutation Class which imports all the functionalities Mutation Classes
-class Mutation(UserMutation):
+@strawberry.type
+class Mutation(UserMutation, TweetMutation):
     pass
 
 
 # Query Class which imports all the functionalities Query Classes
+@strawberry.type
 class Query(UserQuery):
     pass
 

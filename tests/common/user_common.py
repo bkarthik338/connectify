@@ -59,7 +59,6 @@ def create_test_user(testcase: str) -> GeneralResponse:
     :Invalid Username/Email
     """
     data = load_user_json_file()[testcase]
-    print("Inside Create test user")
     response = userMutationInstance.create_user(
         Info,
         username=data["username"],

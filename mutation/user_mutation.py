@@ -3,7 +3,7 @@ import bcrypt
 import strawberry
 from bson import ObjectId
 
-from constants import UPDATE_USER_TABLE_KEYS
+from constants import USER_UPDATE_TABLE_KEYS
 from database import db
 from models.user_model import GeneralResponse
 from models.user_model import UpdateUserInput
@@ -25,7 +25,6 @@ class UserMutation:
             return GeneralResponse(
                 msg=f"Username Already Exists: {username}", success=False
             )
-        print("Username Check is done")
         if not validate_email(email=email):
             return GeneralResponse(
                 msg=f"Invalid Email: {email}", success=False
@@ -67,7 +66,7 @@ class UserMutation:
         update_dict = {}
         update_data = user_input.to_dict()
         for key, value in update_data.items():
-            if key in UPDATE_USER_TABLE_KEYS and value is not None:
+            if key in USER_UPDATE_TABLE_KEYS and value is not None:
                 update_dict[key] = value
         if not update_dict:
             return GeneralResponse(
