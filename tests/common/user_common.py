@@ -59,7 +59,6 @@ def create_test_user(testcase: str) -> GeneralResponse:
     :Invalid Username/Email
     """
     data = load_user_json_file()[testcase]
-    print("Inside Create test user")
     response = userMutationInstance.create_user(
         Info,
         username=data["username"],
@@ -112,5 +111,19 @@ def update_test_user(testcase: str, token: str) -> GeneralResponse:
         Info,
         token=token,
         user_input=UpdateUserInput.from_json(json.dumps(data)),
+    )
+    return response
+
+
+def reset_password_test_user(testcase: str, token: str) -> GeneralResponse:
+    """
+    This function is to check Reset Password API
+    """
+    data = load_user_json_file()[testcase]
+    response = userMutationInstance.reset_password(
+        Info,
+        token=token,
+        oldPassword=data["old_password"],
+        newPassword=data["new_password"],
     )
     return response

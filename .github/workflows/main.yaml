@@ -44,4 +44,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: User Test Cases
-        run: pytest tests/test_user.py
+        run: pytest tests/test_user.py --no-header -vv
+
+      - name: Tweets Module Test Cases
+        run: pytest tests/test_tweet.py --no-header -vv
