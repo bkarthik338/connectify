@@ -196,6 +196,18 @@ def test_deletesingletweetvaliddata():
     assert response.msg == "Deleted Tweet"
 
 
+def test_getsingletweetinvalid():
+    """
+    This test is to check the get Single API using
+    using deleted tweet ID
+    """
+    global tweet_id
+    response = get_single_tweet(token=loggedinusertoken, tweet_id=tweet_id)
+    assert isinstance(response, GeneralResponse)
+    assert not response.success
+    assert response.msg == "Tweet Not Found"
+
+
 def test_deletesingletweetinvalidtoken():
     """
     This test is to check the delete single tweet
