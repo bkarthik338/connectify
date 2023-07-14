@@ -1,3 +1,6 @@
 {
-    "createPostValid": {"description": "Tweet Posted From UnitTest Case", "hashtags": "#hashtag1#hashtag2#hashtag3"}
+    "createPostValid": {"description": "Tweet Posted From UnitTest Case", "hashtags": "#hashtag1#hashtag2#hashtag3"},
+    "updateTweetValid": {"description": "Updated Description", "hashtags": "#UpdatedHashtags"},
+    "updateTweetDescription": {"description": "Updated Description Twice"},
+    "updateTweetInvalidData": {}
 }
