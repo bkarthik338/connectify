@@ -71,3 +71,36 @@ class TweetMutation:
             ),
             success=True,
         )
+
+    @strawberry.mutation
+    def delete_single_tweet(
+        self, info, token: str, tweet_id: str
+    ) -> GeneralResponse:
+        user_data = verify_user_token(token=token)
+        if not user_data["success"]:
+            return GeneralResponse(
+                msg="Authentication Failed: Invalid Token", success=False
+            )
+        deleted_obj = tweet_collection.delete_one(
+            {
+                "user_id": ObjectId(user_data["response"]["user_id"]),
+                "_id": ObjectId(tweet_id),
+            }
+        )
+        if not deleted_obj.deleted_count > 0:
+            return GeneralResponse(msg="Delete Tweet Failed", success=False)
+        return GeneralResponse(msg="Deleted Tweet", success=True)
+
+    @strawberry.mutation
+    def delete_all_tweets(self, info, token: str) -> GeneralResponse:
+        user_data = verify_user_token(token=token)
+        if not user_data["success"]:
+            return GeneralResponse(
+                msg="Authentication Failed: Invalid Token", success=False
+            )
+        deleted_obj = tweet_collection.delete_many(
+            {"user_id": ObjectId(user_data["response"]["user_id"])}
+        )
+        if not deleted_obj.deleted_count > 0:
+            return GeneralResponse(msg="Delete Tweets Failed", success=False)
+        return GeneralResponse(msg="Deleted All User Tweets", success=True)

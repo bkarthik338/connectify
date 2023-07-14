@@ -81,3 +81,19 @@ def update_tweet_test(
         Info, token=token, tweetId=tweet_id, updateData=tweetModelInstance
     )
     return response
+
+
+def delete_tweet_test(
+    token: str, singledeletetestcase: bool = False, tweet_id: str = None
+) -> GeneralResponse:
+    """
+    This function is to check delete single tweet and
+    User related delete all API's
+    """
+    if singledeletetestcase:
+        response = tweetMutationInstance.delete_single_tweet(
+            Info, token=token, tweet_id=tweet_id
+        )
+    else:
+        response = tweetMutationInstance.delete_all_tweets(Info, token=token)
+    return response

@@ -1,6 +1,7 @@
 import pytest
 
 from .common.tweet_common import create_post_test
+from .common.tweet_common import delete_tweet_test
 from .common.tweet_common import get_all_tweets
 from .common.tweet_common import get_single_tweet
 from .common.tweet_common import update_tweet_test
@@ -180,6 +181,82 @@ def test_updatetweetinvaliddata():
     assert isinstance(response, GeneralResponse)
     assert not response.success
     assert response.msg == "Invalid Data Sent For Updation"
+
+
+def test_deletesingletweetvaliddata():
+    """
+    This test is to check the delete single tweet
+    API using valid tweet ID
+    """
+    response = delete_tweet_test(
+        token=loggedinusertoken, singledeletetestcase=True, tweet_id=tweet_id
+    )
+    assert isinstance(response, GeneralResponse)
+    assert response.success
+    assert response.msg == "Deleted Tweet"
+
+
+def test_deletesingletweetinvalidtoken():
+    """
+    This test is to check the delete single tweet
+    API using invalid token
+    """
+    response = delete_tweet_test(
+        token="token", singledeletetestcase=True, tweet_id=tweet_id
+    )
+    assert isinstance(response, GeneralResponse)
+    assert not response.success
+    assert response.msg.startswith("Authentication Failed: Invalid Token")
+
+
+def test_deletesingletweetinvalidtweetid():
+    """
+    This test is to check the delete single tweet
+    API using invalid tweet id
+    """
+    response = delete_tweet_test(
+        token=loggedinusertoken, singledeletetestcase=True, tweet_id=tweet_id
+    )
+    assert isinstance(response, GeneralResponse)
+    assert not response.success
+    assert response.msg.startswith("Delete Tweet Failed")
+
+
+def test_deletealltweetvalidtoken():
+    """
+    This test is to check the delete all user tweet
+    API using valid token
+    """
+    response = delete_tweet_test(
+        token=loggedinusertoken, singledeletetestcase=False
+    )
+    assert isinstance(response, GeneralResponse)
+    assert response.success
+    assert response.msg.startswith("Deleted All User Tweets")
+
+
+def test_deletealltweetinvalidtoken():
+    """
+    This test is to check the delete all user tweet
+    API using invalid token
+    """
+    response = delete_tweet_test(token="token", singledeletetestcase=False)
+    assert isinstance(response, GeneralResponse)
+    assert not response.success
+    assert response.msg.startswith("Authentication Failed: Invalid Token")
+
+
+def test_deletealltweetinvalid():
+    """
+    This test is to check the delete all user tweet
+    API with no existing tweets in database
+    """
+    response = delete_tweet_test(
+        token=loggedinusertoken, singledeletetestcase=False
+    )
+    assert isinstance(response, GeneralResponse)
+    assert not response.success
+    assert response.msg.startswith("Delete Tweets Failed")
 
 
 if __name__ == "__main__":
