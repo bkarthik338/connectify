@@ -8,9 +8,9 @@ import strawberry
 # User Model
 @strawberry.type
 class User:
-    id: str
-    username: str
-    email: str
+    id: str = None
+    username: str = None
+    email: str = None
     password: str = None
 
 

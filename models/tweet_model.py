@@ -5,6 +5,8 @@ from typing import Optional
 import strawberry
 from bson import ObjectId
 
+from models.user_model import User
+
 
 # Get Tweets Response Model
 @strawberry.type
@@ -12,6 +14,8 @@ class TweetModel:
     id: Optional[str] = None
     description: Optional[str] = None
     hashtags: Optional[str] = None
+    likes_count: int = 0
+    liked_users: List[User] = None
 
     @classmethod
     def from_dict(cls, data):

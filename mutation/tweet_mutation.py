@@ -12,6 +12,7 @@ from models.user_model import GeneralResponse
 from utility.user_utility import verify_user_token
 
 tweet_collection = db["tweet"]
+like_collection = db["like"]
 
 
 @strawberry.type
@@ -31,7 +32,10 @@ class TweetMutation:
             "hashtags": hashtags,
             "user_id": ObjectId(user_data["response"]["user_id"]),
         }
-        _ = tweet_collection.insert_one(tweet_data)
+        tweet_document = tweet_collection.insert_one(tweet_data)
+        _ = like_collection.insert_one(
+            {"tweet_id": tweet_document.inserted_id, "user_id": []}
+        )
         return GeneralResponse(msg="Tweet Posted Successfully", success=True)
 
     @strawberry.mutation

@@ -1,8 +1,13 @@
 import strawberry
 import uvicorn
 from fastapi import FastAPI
+from fastapi import Request
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from strawberry.asgi import GraphQL
 
+from mutation.likes_mutation import LikesMutattion
 from mutation.tweet_mutation import TweetMutation
 from mutation.user_mutation import UserMutation
 from query.tweet_query import TweetQuery
@@ -10,10 +15,21 @@ from query.user_query import UserQuery
 
 app = FastAPI()
 
+templates = Jinja2Templates(directory="templates")
+
+
+app.mount("/static", StaticFiles(directory="templates/static"), name="static")
+app.mount("/templates", StaticFiles(directory="templates"), name="templates")
+
+
+@app.get("/login", response_class=HTMLResponse)
+async def get_login(request: Request):
+    return templates.TemplateResponse("login.html", {"request": request})
+
 
 # Mutation Class which imports all the functionalities Mutation Classes
 @strawberry.type
-class Mutation(UserMutation, TweetMutation):
+class Mutation(UserMutation, TweetMutation, LikesMutattion):
     pass
 
 
@@ -30,7 +46,7 @@ schema = strawberry.Schema(query=Query, mutation=Mutation)
 graphql_app = GraphQL(schema)
 
 # Add the GraphQL route to the FastAPI application
-app.add_route("/graphql", graphql_app)
+app.mount("/graphql", graphql_app)
 
 # Run the FastAPI application
 if __name__ == "__main__":
