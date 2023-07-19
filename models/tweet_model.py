@@ -20,9 +20,15 @@ class TweetModel:
     @classmethod
     def from_dict(cls, data):
         instance = cls()
+        user_details = []
         for key, value in data.items():
             if isinstance(value, ObjectId):
                 setattr(instance, key, value)
+                continue
+            elif key == "liked_users":
+                for user in value:
+                    user_details.append(User().from_dict(user))
+                setattr(instance, key, user_details)
                 continue
             setattr(instance, key, value)
         return instance
