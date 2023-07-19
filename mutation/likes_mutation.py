@@ -21,7 +21,7 @@ class LikesMutattion:
         tweet_obj = tweet_collection.find_one({"_id": ObjectId(tweet_id)})
         if not tweet_obj:
             return GeneralResponse(msg="Tweet Not Found", success=False)
-        _ = likes_collection.update_one(
+        like_obj = likes_collection.update_one(
             {"tweet_id": ObjectId(tweet_id)},
             {
                 "$addToSet": {
@@ -29,4 +29,30 @@ class LikesMutattion:
                 }
             },
         )
+        if not like_obj.modified_count > 0:
+            return GeneralResponse(
+                msg="Unable to dislike tweet", success=False
+            )
         return GeneralResponse(msg="Liked The Tweet", success=True)
+
+    @strawberry.mutation
+    def dislike_tweet(
+        self, info, token: str, tweet_id: str
+    ) -> GeneralResponse:
+        user_data = verify_user_token(token=token)
+        if not user_data["success"]:
+            return GeneralResponse(
+                msg="Authentication Failed: Token Invalid", success=False
+            )
+        tweet_obj = tweet_collection.find_one({"_id": ObjectId(tweet_id)})
+        if not tweet_obj:
+            return GeneralResponse(msg="Tweet Not Found", success=False)
+        dislike_obj = likes_collection.update_one(
+            {"tweet_id": ObjectId(tweet_id)},
+            {"$pull": {"user_id": ObjectId(user_data["response"]["user_id"])}},
+        )
+        if not dislike_obj.modified_count > 0:
+            return GeneralResponse(
+                msg="Unable to dislike tweet", success=False
+            )
+        return GeneralResponse(msg="Disliked Tweet", success=True)

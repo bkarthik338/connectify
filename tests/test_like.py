@@ -106,5 +106,43 @@ def test_likepostinvalidtweetid():
     response.msg.startswith("Tweet Not Found")
 
 
+def test_dislikepostvalid():
+    """
+    This test is to check the dislike functionality
+    using valid token and tweetID
+    """
+    response = likeMutationInstance.dislike_tweet(
+        Info, token=loggedinusertokendict["user1"], tweet_id=tweetids[0]
+    )
+    assert isinstance(response, GeneralResponse)
+    response.msg = "Disliked Tweet"
+
+
+def test_dislikepostinvalidtoken():
+    """
+    This test is to check the dislike functionality
+    using invalid token
+    """
+    response = likeMutationInstance.dislike_tweet(
+        Info, token="token", tweet_id=tweetids[0]
+    )
+    assert isinstance(response, GeneralResponse)
+    response.msg.startswith("Authentication Failed")
+
+
+def test_dislikepostinvalidtweetid():
+    """
+    This test is to check the dislike functionality
+    using invalid token
+    """
+    response = likeMutationInstance.dislike_tweet(
+        Info,
+        token=loggedinusertokendict["user1"],
+        tweet_id=ObjectId("000000000000000000000000"),
+    )
+    assert isinstance(response, GeneralResponse)
+    response.msg.startswith("Tweet Not Found")
+
+
 if __name__ == "__main__":
     pytest.main([__file__])
