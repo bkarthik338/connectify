@@ -1,9 +1,8 @@
 import pytest
 from bson import ObjectId
-from dotenv import load_dotenv
 
-from .common.test_utility import load_tweet_json_file
-from .common.test_utility import load_user_json_file
+from .common.test_utility import tweetTestDataJson
+from .common.test_utility import userTestDataJson
 from models.tweet_model import ListTweetModel
 from models.tweet_model import SingleTweetModel
 from models.tweet_model import UpdateTweetInput
@@ -23,10 +22,7 @@ userMutationInstance = UserMutation()
 userQueryInstance = UserQuery()
 
 
-load_dotenv()
 Info = None
-userTestDataJson = load_user_json_file()
-tweetTestDataJson = load_tweet_json_file()
 
 
 @pytest.fixture(scope="module", autouse=True)

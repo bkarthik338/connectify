@@ -13,5 +13,9 @@
     "updateTestUserInvalid": {"username": "testuser", "password": "password"},
     "resetPasswordTestUserSame": {"old_password": "password", "new_password": "password"},
     "resetPasswordTestUservalid": {"old_password": "password", "new_password": "password1"},
-    "resetPasswordTestUserInvalidOldPassword": {"old_password": "incorrectpassword", "new_password": "password1"}
+    "resetPasswordTestUserInvalidOldPassword": {"old_password": "incorrectpassword", "new_password": "password1"},
+    "rootUser": {"username": "rootuser", "email": "rootuser@example.com", "password": "password"},
+    "user1": {"username": "user1", "email": "user1@example.com", "password": "password"},
+    "user2": {"username": "user2", "email": "user2@example.com", "password": "password"},
+    "user3": {"username": "user3", "email": "user3@example.com", "password": "password"}
 }
