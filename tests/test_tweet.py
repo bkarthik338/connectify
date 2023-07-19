@@ -1,33 +1,53 @@
 import pytest
+from bson import ObjectId
 
-from .common.tweet_common import create_post_test
-from .common.tweet_common import delete_tweet_test
-from .common.tweet_common import get_all_tweets
-from .common.tweet_common import get_single_tweet
-from .common.tweet_common import update_tweet_test
-from .common.user_common import create_test_user
-from .common.user_common import delete_test_user
-from .common.user_common import login_test_user
+from .common.test_utility import tweetTestDataJson
+from .common.test_utility import userTestDataJson
 from models.tweet_model import ListTweetModel
 from models.tweet_model import SingleTweetModel
+from models.tweet_model import UpdateTweetInput
 from models.user_model import GeneralResponse
 from models.user_model import LoginResponse
+from mutation.tweet_mutation import TweetMutation
+from mutation.user_mutation import UserMutation
+from query.tweet_query import TweetQuery
+from query.user_query import UserQuery
 
 loggedinusertoken = None
 tweet_id = None
+
+tweetMutationInstance = TweetMutation()
+tweetQueryInstance = TweetQuery()
+userMutationInstance = UserMutation()
+userQueryInstance = UserQuery()
+
+
+Info = None
 
 
 @pytest.fixture(scope="module", autouse=True)
 def setup_teardown():
     global loggedinusertoken
     # Create Test User For Testing Tweet Functionalities
-    response = create_test_user("createTestUserValid")
+    data = userTestDataJson["createTestUserValid"]
+    response = userMutationInstance.create_user(
+        Info,
+        username=data["username"],
+        email=data["email"],
+        password=data["password"],
+    )
     assert isinstance(response, GeneralResponse)
     assert response.success, "Creating Test User Failed In The Setup Function"
     assert response.msg == "User created Successfully: testuser"
 
     # Login And Get The Token
-    response = login_test_user("loginTestUserValid")
+    data = userTestDataJson["loginTestUserValid"]
+    response = userQueryInstance.userlogin(
+        Info,
+        username=data["username"],
+        password=data["password"],
+        exp_time=None,
+    )
     assert isinstance(response, LoginResponse)
     assert response.success, "Unable To Capture Token For Tweet Module Testing"
     assert response.msg.startswith("Login Successful")
@@ -36,7 +56,10 @@ def setup_teardown():
     yield
     # Teardown code - run once after all the test cases in any file
 
-    response = delete_test_user("deleteTestUser")
+    data = userTestDataJson["deleteTestUser"]
+    response = userMutationInstance.delete_user(
+        Info, username=data["username"]
+    )
     assert isinstance(response, GeneralResponse)
     assert response.success, "Unable To Delete Created Test User"
     assert response.msg == "User is deleted."
@@ -47,7 +70,13 @@ def test_createtweetpost():
     This test is to check the Create Post API
     valid data
     """
-    response = create_post_test("createPostValid", token=loggedinusertoken)
+    data = tweetTestDataJson["createPostValid"]
+    response = tweetMutationInstance.create_tweet(
+        Info,
+        token=loggedinusertoken,
+        description=data["description"],
+        # hashtags=data["hashtags"]
+    )
     assert isinstance(response, GeneralResponse)
     assert response.success, "Unable To Create New Tweet Post"
     assert response.msg == "Tweet Posted Successfully"
@@ -58,7 +87,13 @@ def test_createtweetpostinvalidtoken():
     This test is to check the Create Post API
     with invalid token
     """
-    response = create_post_test("createPostValid", token="token")
+    data = tweetTestDataJson["createPostValid"]
+    response = tweetMutationInstance.create_tweet(
+        Info,
+        token="token",
+        description=data["description"],
+        # hashtags=data["hashtags"]
+    )
     assert isinstance(response, GeneralResponse)
     assert (
         not response.success
@@ -73,7 +108,7 @@ def test_getallmytweets():
     """
     global tweet_id
     test_createtweetpost()
-    response = get_all_tweets(token=loggedinusertoken)
+    response = tweetQueryInstance.my_tweets(Info, token=loggedinusertoken)
     assert isinstance(response, ListTweetModel)
     assert response.success
     assert len(response.tweets) > 0
@@ -85,20 +120,21 @@ def test_getallmytweetsinvalidtoken():
     This test is to check the get all tweets API
     with invalid token
     """
-    response = get_all_tweets(token="token")
+    response = tweetQueryInstance.my_tweets(Info, token="token")
     assert isinstance(response, GeneralResponse)
     assert not response.success
     assert response.msg.startswith("Authentication Failed")
 
 
-# TODO Tweet Not Found Test Case
 def test_getsingletweetvalid():
     """
     This test is to check the get Single API using
     Object ID
     """
     global tweet_id
-    response = get_single_tweet(token=loggedinusertoken, tweet_id=tweet_id)
+    response = tweetQueryInstance.get_single_tweet(
+        Info, token=loggedinusertoken, tweetId=ObjectId(tweet_id)
+    )
     assert isinstance(response, SingleTweetModel)
     assert response.success
     assert response.tweet
@@ -110,7 +146,9 @@ def test_getsingletweetinvalidtoken():
     where token is invalid
     """
     global tweet_id
-    response = get_single_tweet(token="token", tweet_id=tweet_id)
+    response = tweetQueryInstance.get_single_tweet(
+        Info, token="token", tweetId=ObjectId(tweet_id)
+    )
     assert isinstance(response, GeneralResponse)
     assert not response.success
     assert response.msg.startswith("Authentication Failed")
@@ -122,8 +160,13 @@ def test_updatetweetvalid():
     valid data
     """
     global tweet_id
-    response = update_tweet_test(
-        "updateTweetValid", token=loggedinusertoken, tweet_id=tweet_id
+    test_data = tweetTestDataJson["updateTweetValid"]
+    tweetModelInstance = UpdateTweetInput().from_dict(test_data)
+    response = tweetMutationInstance.update_tweet(
+        Info,
+        token=loggedinusertoken,
+        tweetId=tweet_id,
+        updateData=tweetModelInstance,
     )
     assert isinstance(response, SingleTweetModel)
     assert response.success
@@ -135,8 +178,14 @@ def test_updatetweetsamedata():
     This test is to check the Update Tweet API using
     same data, will return error
     """
-    response = update_tweet_test(
-        "updateTweetValid", token=loggedinusertoken, tweet_id=tweet_id
+    global tweet_id
+    test_data = tweetTestDataJson["updateTweetValid"]
+    tweetModelInstance = UpdateTweetInput().from_dict(test_data)
+    response = tweetMutationInstance.update_tweet(
+        Info,
+        token=loggedinusertoken,
+        tweetId=tweet_id,
+        updateData=tweetModelInstance,
     )
     assert isinstance(response, GeneralResponse)
     assert not response.success
@@ -148,8 +197,11 @@ def test_updatetweetinvalidtoken():
     This test is to check the Update Tweet API using
     invalid token
     """
-    response = update_tweet_test(
-        "updateTweetValid", token="token", tweet_id=tweet_id
+    global tweet_id
+    test_data = tweetTestDataJson["updateTweetValid"]
+    tweetModelInstance = UpdateTweetInput().from_dict(test_data)
+    response = tweetMutationInstance.update_tweet(
+        Info, token="token", tweetId=tweet_id, updateData=tweetModelInstance
     )
     assert isinstance(response, GeneralResponse)
     assert not response.success
@@ -161,8 +213,14 @@ def test_updatetweetoneparameter():
     This test is to check the Update Tweet API using
     one parameter and other parameter won't be changed
     """
-    response = update_tweet_test(
-        "updateTweetDescription", token=loggedinusertoken, tweet_id=tweet_id
+    global tweet_id
+    test_data = tweetTestDataJson["updateTweetDescription"]
+    tweetModelInstance = UpdateTweetInput().from_dict(test_data)
+    response = tweetMutationInstance.update_tweet(
+        Info,
+        token=loggedinusertoken,
+        tweetId=tweet_id,
+        updateData=tweetModelInstance,
     )
     assert isinstance(response, SingleTweetModel)
     assert response.success
@@ -175,8 +233,14 @@ def test_updatetweetinvaliddata():
     This test is to check the Update Tweet API using
     invalid data
     """
-    response = update_tweet_test(
-        "updateTweetInvalidData", token=loggedinusertoken, tweet_id=tweet_id
+    global tweet_id
+    test_data = tweetTestDataJson["updateTweetInvalidData"]
+    tweetModelInstance = UpdateTweetInput().from_dict(test_data)
+    response = tweetMutationInstance.update_tweet(
+        Info,
+        token=loggedinusertoken,
+        tweetId=tweet_id,
+        updateData=tweetModelInstance,
     )
     assert isinstance(response, GeneralResponse)
     assert not response.success
@@ -188,8 +252,9 @@ def test_deletesingletweetvaliddata():
     This test is to check the delete single tweet
     API using valid tweet ID
     """
-    response = delete_tweet_test(
-        token=loggedinusertoken, singledeletetestcase=True, tweet_id=tweet_id
+    global tweet_id
+    response = tweetMutationInstance.delete_single_tweet(
+        Info, token=loggedinusertoken, tweet_id=tweet_id
     )
     assert isinstance(response, GeneralResponse)
     assert response.success
@@ -202,7 +267,9 @@ def test_getsingletweetinvalid():
     using deleted tweet ID
     """
     global tweet_id
-    response = get_single_tweet(token=loggedinusertoken, tweet_id=tweet_id)
+    response = tweetQueryInstance.get_single_tweet(
+        Info, token=loggedinusertoken, tweetId=tweet_id
+    )
     assert isinstance(response, GeneralResponse)
     assert not response.success
     assert response.msg == "Tweet Not Found"
@@ -213,8 +280,9 @@ def test_deletesingletweetinvalidtoken():
     This test is to check the delete single tweet
     API using invalid token
     """
-    response = delete_tweet_test(
-        token="token", singledeletetestcase=True, tweet_id=tweet_id
+    global tweet_id
+    response = tweetMutationInstance.delete_single_tweet(
+        Info, token="token", tweet_id=tweet_id
     )
     assert isinstance(response, GeneralResponse)
     assert not response.success
@@ -226,8 +294,9 @@ def test_deletesingletweetinvalidtweetid():
     This test is to check the delete single tweet
     API using invalid tweet id
     """
-    response = delete_tweet_test(
-        token=loggedinusertoken, singledeletetestcase=True, tweet_id=tweet_id
+    global tweet_id
+    response = tweetMutationInstance.delete_single_tweet(
+        Info, token=loggedinusertoken, tweet_id=tweet_id
     )
     assert isinstance(response, GeneralResponse)
     assert not response.success
@@ -239,8 +308,8 @@ def test_deletealltweetvalidtoken():
     This test is to check the delete all user tweet
     API using valid token
     """
-    response = delete_tweet_test(
-        token=loggedinusertoken, singledeletetestcase=False
+    response = tweetMutationInstance.delete_all_tweets(
+        Info, token=loggedinusertoken
     )
     assert isinstance(response, GeneralResponse)
     assert response.success
@@ -252,7 +321,7 @@ def test_deletealltweetinvalidtoken():
     This test is to check the delete all user tweet
     API using invalid token
     """
-    response = delete_tweet_test(token="token", singledeletetestcase=False)
+    response = tweetMutationInstance.delete_all_tweets(Info, token="token")
     assert isinstance(response, GeneralResponse)
     assert not response.success
     assert response.msg.startswith("Authentication Failed: Invalid Token")
@@ -263,8 +332,8 @@ def test_deletealltweetinvalid():
     This test is to check the delete all user tweet
     API with no existing tweets in database
     """
-    response = delete_tweet_test(
-        token=loggedinusertoken, singledeletetestcase=False
+    response = tweetMutationInstance.delete_all_tweets(
+        Info, token=loggedinusertoken
     )
     assert isinstance(response, GeneralResponse)
     assert not response.success
