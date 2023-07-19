@@ -41,7 +41,7 @@ class GetUserFailureResponse:
 class LoginResponse:
     msg: str
     success: bool
-    token: str = None
+    token: Optional[str] = None
 
 
 # Update User Input

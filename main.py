@@ -1,10 +1,6 @@
 import strawberry
 import uvicorn
 from fastapi import FastAPI
-from fastapi import Request
-from fastapi.responses import HTMLResponse
-from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
 from strawberry.asgi import GraphQL
 
 from mutation.likes_mutation import LikesMutattion
@@ -15,16 +11,16 @@ from query.user_query import UserQuery
 
 app = FastAPI()
 
-templates = Jinja2Templates(directory="templates")
+# templates = Jinja2Templates(directory="templates")
 
 
-app.mount("/static", StaticFiles(directory="templates/static"), name="static")
-app.mount("/templates", StaticFiles(directory="templates"), name="templates")
+# app.mount("/static", StaticFiles(directory="templates/static"), name="static")
+# app.mount("/templates", StaticFiles(directory="templates"), name="templates")
 
 
-@app.get("/login", response_class=HTMLResponse)
-async def get_login(request: Request):
-    return templates.TemplateResponse("login.html", {"request": request})
+# @app.get("/login", response_class=HTMLResponse)
+# async def get_login(request: Request):
+#     return templates.TemplateResponse("login.html", {"request": request})
 
 
 # Mutation Class which imports all the functionalities Mutation Classes
