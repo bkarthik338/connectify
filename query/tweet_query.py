@@ -39,20 +39,39 @@ class TweetQuery:
                     "localField": "_id",
                     "foreignField": "tweet_id",
                     "as": "liked_users",
+                },
+            },
+            {
+                "$lookup": {
+                    "from": "user",
+                    "localField": "liked_users.user_id",
+                    "foreignField": "_id",
+                    "as": "user_objects",
                 }
             },
             {
                 "$project": {
-                    "id": "$_id",
+                    "id": {"$toString": "$_id"},
+                    "_id": 0,
                     "description": 1,
                     "hashtags": 1,
                     "likes_count": {
                         "$size": {
                             "$reduce": {
-                                "input": "$liked_users.user_id",
+                                "input": "$user_objects.user_id",
                                 "initialValue": [],
                                 "in": {"$concatArrays": ["$$value", "$$this"]},
                             }
+                        }
+                    },
+                    "liked_users": {
+                        "$map": {
+                            "input": "$user_objects",
+                            "as": "user",
+                            "in": {
+                                "username": "$$user.username",
+                                "id": {"$toString": "$$user._id"},
+                            },
                         }
                     },
                 }
@@ -85,6 +104,14 @@ class TweetQuery:
                 },
             },
             {
+                "$lookup": {
+                    "from": "user",
+                    "localField": "likeDocument.user_id",
+                    "foreignField": "_id",
+                    "as": "user_objects",
+                }
+            },
+            {
                 "$project": {
                     "id": {"$toString": "$_id"},
                     "description": 1,
@@ -99,6 +126,16 @@ class TweetQuery:
                         }
                     },
                     "_id": 0,
+                    "liked_users": {
+                        "$map": {
+                            "input": "$user_objects",
+                            "as": "user",
+                            "in": {
+                                "username": "$$user.username",
+                                "id": {"$toString": "$$user._id"},
+                            },
+                        }
+                    },
                 }
             },
         ]

@@ -42,7 +42,7 @@ schema = strawberry.Schema(query=Query, mutation=Mutation)
 graphql_app = GraphQL(schema)
 
 # Add the GraphQL route to the FastAPI application
-app.mount("/graphql", graphql_app)
+app.add_route("/graphql", graphql_app)
 
 # Run the FastAPI application
 if __name__ == "__main__":
