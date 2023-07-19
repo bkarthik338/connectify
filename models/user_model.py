@@ -13,6 +13,13 @@ class User:
     email: str = None
     password: str = None
 
+    @classmethod
+    def from_dict(cls, data):
+        instance = cls()
+        for key, value in data.items():
+            setattr(instance, key, value)
+        return instance
+
 
 # SignUP API Response
 @strawberry.type
