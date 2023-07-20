@@ -48,3 +48,6 @@ jobs:
 
       - name: Tweets Module Test Cases
         run: pytest tests/test_tweet.py --no-header -vv
+
+      - name: Likes Module Test Cases
+        run: pytest tests/test_like.py --no-header -vv

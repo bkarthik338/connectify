@@ -46,7 +46,7 @@ class UserMutation:
 
     @strawberry.mutation
     def delete_user(
-        self, info, username: str = None, id: strawberry.ID = None
+        self, info, username: str = None, id: str = None
     ) -> GeneralResponse:
         query = {"_id": ObjectId(id)} if id else {"username": username}
         if not user_collection.find_one(query):

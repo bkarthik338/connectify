@@ -1,0 +1,6 @@
+{
+    "createPost1": {"description": "First Post", "hashtags": "#hashtag1"},
+    "createPost2": {"description": "Second Post", "hashtags": "#hashtag2"},
+    "createPost3": {"description": "Third Post", "hashtags": "#hashtag3"}
+
+}

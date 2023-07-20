@@ -8,10 +8,17 @@ import strawberry
 # User Model
 @strawberry.type
 class User:
-    id: str
-    username: str
-    email: str
+    id: str = None
+    username: str = None
+    email: str = None
     password: str = None
+
+    @classmethod
+    def from_dict(cls, data):
+        instance = cls()
+        for key, value in data.items():
+            setattr(instance, key, value)
+        return instance
 
 
 # SignUP API Response
@@ -41,7 +48,7 @@ class GetUserFailureResponse:
 class LoginResponse:
     msg: str
     success: bool
-    token: str = None
+    token: Optional[str] = None
 
 
 # Update User Input

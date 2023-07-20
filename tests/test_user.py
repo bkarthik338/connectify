@@ -1,27 +1,56 @@
-import pytest
+import json
+import os
 
-from .common.user_common import create_test_user
-from .common.user_common import delete_test_user
-from .common.user_common import generate_jwt_token_test
-from .common.user_common import get_test_user
-from .common.user_common import login_test_user
-from .common.user_common import reset_password_test_user
-from .common.user_common import update_test_user
+import pytest
+from dotenv import load_dotenv
+
+from .common.test_utility import generate_jwt_token_test
 from models.user_model import GeneralResponse
 from models.user_model import GetUserFailureResponse
 from models.user_model import GetUserResponse
 from models.user_model import LoginResponse
+from models.user_model import UpdateUserInput
+from mutation.user_mutation import UserMutation
+from query.user_query import UserQuery
 
+
+load_dotenv()
+Info = None
+base_url = os.environ.get("BASE_URL")
+current_dir = os.path.dirname(os.path.abspath(__file__))
+user_json_file_path = os.path.join(current_dir, "testdata/user_testcases.json")
+
+
+def load_user_json_file():
+    """
+    This function is to load use test data json file
+    """
+    with open(user_json_file_path) as file:
+        data = json.load(file)
+    return data
+
+
+userTestDataJson = load_user_json_file()
 
 loggedinusertoken = None
 loggedinuserobjectid = None
+
+# Instances for Query and Mutation Classes
+userMutationInstance = UserMutation()
+userQueryInstance = UserQuery()
 
 
 def test_createuser():
     """
     This testcase is to check create user api
     """
-    response = create_test_user("createTestUserValid")
+    data = userTestDataJson["createTestUserValid"]
+    response = userMutationInstance.create_user(
+        Info,
+        username=data["username"],
+        email=data["email"],
+        password=data["password"],
+    )
     assert isinstance(response, GeneralResponse)
     assert response.success
     assert response.msg == "User created Successfully: testuser"
@@ -32,7 +61,13 @@ def test_createuseralreadyexist():
     This testcase is to check create user api
     for user which already exists
     """
-    response = create_test_user("createTestAlreadyExists")
+    data = userTestDataJson["createTestAlreadyExists"]
+    response = userMutationInstance.create_user(
+        Info,
+        username=data["username"],
+        email=data["email"],
+        password=data["password"],
+    )
     assert isinstance(response, GeneralResponse)
     assert not response.success
     assert response.msg.startswith("Username Already Exists")
@@ -43,7 +78,13 @@ def test_createuserinvalidusername():
     This testcase is to check regex fail in create user api
     The Username should have 3-20 characters
     """
-    response = create_test_user("createTestUserInvalidUsername")
+    data = userTestDataJson["createTestUserInvalidUsername"]
+    response = userMutationInstance.create_user(
+        Info,
+        username=data["username"],
+        email=data["email"],
+        password=data["password"],
+    )
     assert isinstance(response, GeneralResponse)
     assert not response.success
     assert response.msg.startswith("Invalid Username")
@@ -55,7 +96,13 @@ def test_createuserinvalidemail():
     The Email should have valid format
     :user!@example.com (Should not contain !)
     """
-    response = create_test_user("createTestUserInvalidEmail")
+    data = userTestDataJson["createTestUserInvalidEmail"]
+    response = userMutationInstance.create_user(
+        Info,
+        username=data["username"],
+        email=data["email"],
+        password=data["password"],
+    )
     assert isinstance(response, GeneralResponse)
     assert not response.success
     assert response.msg.startswith("Invalid Email")
@@ -67,7 +114,13 @@ def test_loginuservalid():
     are valid username and password
     """
     global loggedinusertoken
-    response = login_test_user("loginTestUserValid")
+    data = userTestDataJson["loginTestUserValid"]
+    response = userQueryInstance.userlogin(
+        Info,
+        username=data["username"],
+        password=data["password"],
+        exp_time=None,
+    )
     assert isinstance(response, LoginResponse)
     assert response.success
     assert response.msg.startswith("Login Successful")
@@ -79,7 +132,7 @@ def test_getuser():
     This testcase is to check get user api
     """
     global loggedinuserobjectid
-    response = get_test_user(loggedinusertoken)
+    response = userQueryInstance.getuser(Info, loggedinusertoken)
     assert isinstance(response, GetUserResponse)
     assert response.success
     assert response.data.username == "testuser"
@@ -91,7 +144,13 @@ def test_loginuserinvalidusername():
     This testcase is to check the login api where parameters
     are Invalid username and password (Not registered)
     """
-    response = login_test_user("loginTestUserInvalidUsername")
+    data = userTestDataJson["loginTestUserInvalidUsername"]
+    response = userQueryInstance.userlogin(
+        Info,
+        username=data["username"],
+        password=data["password"],
+        exp_time=None,
+    )
     assert isinstance(response, LoginResponse)
     assert not response.success
     assert response.msg.startswith("Login Failure Invalid Username")
@@ -102,7 +161,13 @@ def test_loginuserpasswordmismatch():
     This testcase is to check the login api where parameters
     are Invalid username and password (Not registered)
     """
-    response = login_test_user("loginTestUserPasswordMismatch")
+    data = userTestDataJson["loginTestUserPasswordMismatch"]
+    response = userQueryInstance.userlogin(
+        Info,
+        username=data["username"],
+        password=data["password"],
+        exp_time=None,
+    )
     assert isinstance(response, LoginResponse)
     assert not response.success
     assert response.msg.startswith("Incorrect Password")
@@ -111,13 +176,13 @@ def test_loginuserpasswordmismatch():
 def test_getuserexpiredtoken():
     """
     This testcase is to check get user api
-    which doesn't exist
+    in which token is already expired
     """
     global loggedinuserobjectid
     token = generate_jwt_token_test(
         user_id=loggedinuserobjectid, exp_time=True
     )
-    response = get_test_user(token=token)
+    response = userQueryInstance.getuser(Info, token)
     assert isinstance(response, GetUserFailureResponse)
     assert not response.success
     assert response.error.startswith("Token has expired")
@@ -128,7 +193,7 @@ def test_getuserinvalidtoken():
     This testcase is to check get user api
     which doesn't exist
     """
-    response = get_test_user(token="12345")
+    response = userQueryInstance.getuser(Info, "12345")
     assert isinstance(response, GetUserFailureResponse)
     assert not response.success
     assert response.error.startswith("Invalid Token")
@@ -140,7 +205,12 @@ def test_updateuserdetails():
     using valid data
     """
     global loggedinusertoken
-    response = update_test_user("updateTestUserValid", token=loggedinusertoken)
+    data = userTestDataJson["updateTestUserValid"]
+    response = userMutationInstance.update_user(
+        Info,
+        token=loggedinusertoken,
+        user_input=UpdateUserInput.from_json(json.dumps(data)),
+    )
     assert isinstance(response, GeneralResponse)
     assert response.success
     assert response.msg == "Updated User Successfully"
@@ -152,8 +222,11 @@ def test_updateusersamedetails():
     the data to be updated is same as in the database
     """
     global loggedinusertoken
-    response = update_test_user(
-        "updateTestUserSameData", token=loggedinusertoken
+    data = userTestDataJson["updateTestUserSameData"]
+    response = userMutationInstance.update_user(
+        Info,
+        token=loggedinusertoken,
+        user_input=UpdateUserInput.from_json(json.dumps(data)),
     )
     assert isinstance(response, GeneralResponse)
     assert not response.success
@@ -167,8 +240,11 @@ def test_updateuserinvaliddetails():
     only Username and Password
     """
     global loggedinusertoken
-    response = update_test_user(
-        "updateTestUserInvalid", token=loggedinusertoken
+    data = userTestDataJson["updateTestUserInvalid"]
+    response = userMutationInstance.update_user(
+        Info,
+        token=loggedinusertoken,
+        user_input=UpdateUserInput.from_json(json.dumps(data)),
     )
     assert isinstance(response, GeneralResponse)
     assert not response.success
@@ -180,7 +256,12 @@ def test_updateuserinvalidtoken():
     This testcase is to check update user api
     where token sent is invalid
     """
-    response = update_test_user("updateTestUserInvalid", token="token")
+    data = userTestDataJson["updateTestUserInvalid"]
+    response = userMutationInstance.update_user(
+        Info,
+        token="token",
+        user_input=UpdateUserInput.from_json(json.dumps(data)),
+    )
     assert isinstance(response, GeneralResponse)
     assert not response.success
     assert response.msg == "Invalid Token"
@@ -194,7 +275,12 @@ def test_updateuserexpiredtoken():
     token = generate_jwt_token_test(
         user_id=loggedinuserobjectid, exp_time=True
     )
-    response = update_test_user("updateTestUserInvalid", token=token)
+    data = userTestDataJson["updateTestUserInvalid"]
+    response = userMutationInstance.update_user(
+        Info,
+        token=token,
+        user_input=UpdateUserInput.from_json(json.dumps(data)),
+    )
     assert isinstance(response, GeneralResponse)
     assert not response.success
     assert response.msg == "Token has expired"
@@ -206,8 +292,12 @@ def test_resetpasswordsame():
     where old and new password's are same
     """
     global loggedinusertoken
-    response = reset_password_test_user(
-        "resetPasswordTestUserSame", token=loggedinusertoken
+    data = userTestDataJson["resetPasswordTestUserSame"]
+    response = userMutationInstance.reset_password(
+        Info,
+        token=loggedinusertoken,
+        oldPassword=data["old_password"],
+        newPassword=data["new_password"],
     )
     assert isinstance(response, GeneralResponse)
     assert not response.success
@@ -219,8 +309,12 @@ def test_resetpasswordinvalidtoken():
     This testcase is to check reset password api
     where token is invalid
     """
-    response = reset_password_test_user(
-        "resetPasswordTestUservalid", token="token"
+    data = userTestDataJson["resetPasswordTestUservalid"]
+    response = userMutationInstance.reset_password(
+        Info,
+        token="token",
+        oldPassword=data["old_password"],
+        newPassword=data["new_password"],
     )
     assert isinstance(response, GeneralResponse)
     assert not response.success
@@ -233,8 +327,12 @@ def test_resetpasswordinvalidoldpassword():
     where old password is incorrect
     """
     global loggedinusertoken
-    response = reset_password_test_user(
-        "resetPasswordTestUserInvalidOldPassword", token=loggedinusertoken
+    data = userTestDataJson["resetPasswordTestUserInvalidOldPassword"]
+    response = userMutationInstance.reset_password(
+        Info,
+        token=loggedinusertoken,
+        oldPassword=data["old_password"],
+        newPassword=data["new_password"],
     )
     assert isinstance(response, GeneralResponse)
     assert not response.success
@@ -247,8 +345,12 @@ def test_resetpasswordvalid():
     where all the details are valid
     """
     global loggedinusertoken
-    response = reset_password_test_user(
-        "resetPasswordTestUservalid", token=loggedinusertoken
+    data = userTestDataJson["resetPasswordTestUservalid"]
+    response = userMutationInstance.reset_password(
+        Info,
+        token=loggedinusertoken,
+        oldPassword=data["old_password"],
+        newPassword=data["new_password"],
     )
     assert isinstance(response, GeneralResponse)
     assert response.success
@@ -259,7 +361,10 @@ def test_deleteuser():
     """
     This testcase is to check delete user api
     """
-    response = delete_test_user("deleteTestUser")
+    data = userTestDataJson["deleteTestUser"]
+    response = userMutationInstance.delete_user(
+        Info, username=data["username"]
+    )
     assert isinstance(response, GeneralResponse)
     assert response.success
     assert response.msg == "User is deleted."
@@ -270,7 +375,10 @@ def test_deleteuserdontexist():
     This testcase is to check delete user api
     which doesn't exists
     """
-    response = delete_test_user("deleteTestUserDontExists")
+    data = userTestDataJson["deleteTestUserDontExists"]
+    response = userMutationInstance.delete_user(
+        Info, username=data["username"]
+    )
     assert isinstance(response, GeneralResponse)
     assert not response.success
     assert response.msg == "User is not registered to delete."
