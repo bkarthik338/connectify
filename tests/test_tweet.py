@@ -55,7 +55,6 @@ def setup_teardown():
 
     yield
     # Teardown code - run once after all the test cases in any file
-
     data = userTestDataJson["deleteTestUser"]
     response = userMutationInstance.delete_user(
         Info, username=data["username"]

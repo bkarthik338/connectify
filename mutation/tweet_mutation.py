@@ -89,7 +89,8 @@ class TweetMutation:
             return GeneralResponse(
                 msg="Authentication Failed: Invalid Token", success=False
             )
-        _ = like_collection.delete_one({"tweet_id": tweet_id})
+        _ = like_collection.delete_one({"tweet_id": ObjectId(tweet_id)})
+        _ = comment_collection.delete_one({"tweet_id": ObjectId(tweet_id)})
         deleted_obj = tweet_collection.delete_one(
             {
                 "user_id": ObjectId(user_data["response"]["user_id"]),
@@ -111,6 +112,7 @@ class TweetMutation:
         tweet_objs = tweet_collection.find({"user_id": user_id})
         tweetIds = [tweet["_id"] for tweet in tweet_objs]
         _ = like_collection.delete_many({"tweet_id": {"$in": tweetIds}})
+        _ = comment_collection.delete_many({"tweet_id": {"$in": tweetIds}})
         deleted_obj = tweet_collection.delete_many({"user_id": user_id})
         if not deleted_obj.deleted_count > 0:
             return GeneralResponse(msg="Delete Tweets Failed", success=False)
