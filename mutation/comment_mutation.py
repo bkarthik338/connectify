@@ -17,7 +17,9 @@ class CommentMutattion:
     ) -> GeneralResponse:
         response = verify_user_token(token=token)
         if not response["success"]:
-            return GeneralResponse(msg="Authentication Failed: Invalid Token")
+            return GeneralResponse(
+                msg="Authentication Failed: Invalid Token", success=False
+            )
         tweet_obj = tweet_collection.find_one({"_id": ObjectId(tweetId)})
         if not tweet_obj:
             return GeneralResponse(msg="Tweet Not Found", success=False)
@@ -34,4 +36,4 @@ class CommentMutattion:
         )
         if not comment_obj.modified_count > 0:
             return GeneralResponse(msg="Unable to add comment", success=False)
-        return GeneralResponse(msg="Tweet Found", success=True)
+        return GeneralResponse(msg="Successfully Added Comment", success=True)
