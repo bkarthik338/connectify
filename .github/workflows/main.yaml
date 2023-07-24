@@ -51,3 +51,6 @@ jobs:
 
       - name: Likes Module Test Cases
         run: pytest tests/test_like.py --no-header -vv
+
+      - name: Comments Module Test Cases
+        run: pytest tests/test_comment.py --no-header -vv

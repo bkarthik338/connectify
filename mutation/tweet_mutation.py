@@ -13,6 +13,7 @@ from utility.user_utility import verify_user_token
 
 tweet_collection = db["tweet"]
 like_collection = db["like"]
+comment_collection = db["comment"]
 
 
 @strawberry.type
@@ -35,6 +36,9 @@ class TweetMutation:
         tweet_document = tweet_collection.insert_one(tweet_data)
         _ = like_collection.insert_one(
             {"tweet_id": tweet_document.inserted_id, "user_id": []}
+        )
+        _ = comment_collection.insert_one(
+            {"tweet_id": tweet_document.inserted_id, "comment": []}
         )
         return GeneralResponse(msg="Tweet Posted Successfully", success=True)
 
@@ -85,7 +89,8 @@ class TweetMutation:
             return GeneralResponse(
                 msg="Authentication Failed: Invalid Token", success=False
             )
-        _ = like_collection.delete_one({"tweet_id": tweet_id})
+        _ = like_collection.delete_one({"tweet_id": ObjectId(tweet_id)})
+        _ = comment_collection.delete_one({"tweet_id": ObjectId(tweet_id)})
         deleted_obj = tweet_collection.delete_one(
             {
                 "user_id": ObjectId(user_data["response"]["user_id"]),
@@ -107,6 +112,7 @@ class TweetMutation:
         tweet_objs = tweet_collection.find({"user_id": user_id})
         tweetIds = [tweet["_id"] for tweet in tweet_objs]
         _ = like_collection.delete_many({"tweet_id": {"$in": tweetIds}})
+        _ = comment_collection.delete_many({"tweet_id": {"$in": tweetIds}})
         deleted_obj = tweet_collection.delete_many({"user_id": user_id})
         if not deleted_obj.deleted_count > 0:
             return GeneralResponse(msg="Delete Tweets Failed", success=False)
