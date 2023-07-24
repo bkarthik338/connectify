@@ -31,6 +31,7 @@ class TweetModel:
     hashtags: Optional[str] = None
     likes_count: int = 0
     liked_users: List[User] = None
+    comments_count: int = 0
     comments: List[CommentUser] = None
 
     @classmethod

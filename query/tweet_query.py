@@ -144,6 +144,15 @@ class TweetQuery:
                             },
                         }
                     },
+                    "comments_count": {
+                        "$size": {
+                            "$reduce": {
+                                "input": "$commentDocument.comment",
+                                "initialValue": [],
+                                "in": {"$concatArrays": ["$$value", "$$this"]},
+                            },
+                        }
+                    },
                     "comments": {
                         "$reduce": {
                             "input": "$commentDocument.comment",

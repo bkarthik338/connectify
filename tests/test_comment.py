@@ -6,6 +6,7 @@ from .common.test_utility import delete_users
 from .common.test_utility import likeTestDataJson
 from constants import TWEETS_NAMES_TESTCASE
 from constants import USER_NAMES_TESTCASE
+from models.comment_model import UpdateCommentInput
 from models.user_model import GeneralResponse
 from mutation.comment_mutation import CommentMutattion
 from mutation.tweet_mutation import TweetMutation
@@ -107,3 +108,89 @@ def test_addcommentinvalidtweetId():
     )
     assert isinstance(response, GeneralResponse)
     assert response.msg.startswith("Tweet Not Found")
+
+
+def test_updatecommentvaliddata():
+    """
+    This test is to check the Update Comment API
+    using valid token and valid tweetId
+    """
+    input = UpdateCommentInput(
+        token=loggedinusertokendict["user1"],
+        tweetId=tweetids[0],
+        comment="Updated First Comment",
+    )
+    response = commentMutationInstance.update_comment(Info, inputData=input)
+    assert isinstance(response, GeneralResponse)
+    assert response.msg == "Successfully Updated Comment"
+    getTweet = tweetQueryInstance.get_single_tweet(
+        Info, token=loggedinusertokendict["user1"], tweetId=tweetids[0]
+    )
+    assert getTweet.tweet.comments[0].description == "Updated First Comment"
+
+
+def test_updatecommentinvalidtoken():
+    """
+    This test is to check the Update Comment API
+    using invalid token and valid tweetId
+    """
+    input = UpdateCommentInput(
+        token="token", tweetId=tweetids[0], comment="Updated First Comment"
+    )
+    response = commentMutationInstance.update_comment(Info, inputData=input)
+    assert isinstance(response, GeneralResponse)
+    assert response.msg.startswith("Authentication Failed")
+
+
+def test_updatecommentinvalidtweetId():
+    """
+    This test is to check the Update Comment API
+    using valid token and valid tweetId
+    """
+    input = UpdateCommentInput(
+        token=loggedinusertokendict["user1"],
+        tweetId=ObjectId("000000000000000000000000"),
+        comment="Updated First Comment",
+    )
+    response = commentMutationInstance.update_comment(Info, inputData=input)
+    assert isinstance(response, GeneralResponse)
+    assert isinstance(response, GeneralResponse)
+    assert response.msg.startswith("Tweet Not Found")
+
+
+def test_deletecommentinvalidtoken():
+    """
+    This test is to check the Delete Comment API
+    using invalid token and valid tweetId
+    """
+    response = commentMutationInstance.delete_comment(
+        Info, tweetId=tweetids[0], token="token"
+    )
+    assert isinstance(response, GeneralResponse)
+    assert response.msg.startswith("Authentication Failed")
+
+
+def test_deletecommentinvalidtweetId():
+    """
+    This test is to check the Delete Comment API
+    using valid token and invalid tweetId
+    """
+    response = commentMutationInstance.delete_comment(
+        Info,
+        tweetId=ObjectId("000000000000000000000000"),
+        token=loggedinusertokendict["user1"],
+    )
+    assert isinstance(response, GeneralResponse)
+    assert response.msg.startswith("Tweet Not Found")
+
+
+def test_deletecommentvalidtweetId():
+    """
+    This test is to check the Delete Comment API
+    using valid token and invalid tweetId
+    """
+    response = commentMutationInstance.delete_comment(
+        Info, tweetId=tweetids[0], token=loggedinusertokendict["user1"]
+    )
+    assert isinstance(response, GeneralResponse)
+    assert response.msg == "Successfully Deleted Comment"
