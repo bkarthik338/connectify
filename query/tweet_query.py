@@ -112,6 +112,14 @@ class TweetQuery:
                 }
             },
             {
+                "$lookup": {
+                    "from": "comment",
+                    "localField": "_id",
+                    "foreignField": "tweet_id",
+                    "as": "commentDocument",
+                },
+            },
+            {
                 "$project": {
                     "id": {"$toString": "$_id"},
                     "description": 1,
@@ -135,6 +143,13 @@ class TweetQuery:
                                 "id": {"$toString": "$$user._id"},
                             },
                         }
+                    },
+                    "comments": {
+                        "$reduce": {
+                            "input": "$commentDocument.comment",
+                            "initialValue": [],
+                            "in": {"$concatArrays": ["$$value", "$$this"]},
+                        },
                     },
                 }
             },

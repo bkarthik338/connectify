@@ -13,6 +13,7 @@ from utility.user_utility import verify_user_token
 
 tweet_collection = db["tweet"]
 like_collection = db["like"]
+comment_collection = db["comment"]
 
 
 @strawberry.type
@@ -35,6 +36,9 @@ class TweetMutation:
         tweet_document = tweet_collection.insert_one(tweet_data)
         _ = like_collection.insert_one(
             {"tweet_id": tweet_document.inserted_id, "user_id": []}
+        )
+        _ = comment_collection.insert_one(
+            {"tweet_id": tweet_document.inserted_id, "comment": []}
         )
         return GeneralResponse(msg="Tweet Posted Successfully", success=True)
 
