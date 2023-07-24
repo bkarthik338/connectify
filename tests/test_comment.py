@@ -145,7 +145,7 @@ def test_updatecommentinvalidtoken():
 def test_updatecommentinvalidtweetId():
     """
     This test is to check the Update Comment API
-    using valid token and valid tweetId
+    using valid token and valid intweetId
     """
     input = UpdateCommentInput(
         token=loggedinusertokendict["user1"],
@@ -187,7 +187,7 @@ def test_deletecommentinvalidtweetId():
 def test_deletecommentvalidtweetId():
     """
     This test is to check the Delete Comment API
-    using valid token and invalid tweetId
+    using valid token and valid tweetId
     """
     response = commentMutationInstance.delete_comment(
         Info, tweetId=tweetids[0], token=loggedinusertokendict["user1"]
