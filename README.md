@@ -33,4 +33,7 @@ This is a backend application for a Social Media Platform. The API's are written
   `uvicorn main:app`
 ## All Set You Are Good To Go
 
+### References:
+1. For Technology Badges: https://github.com/alexandresanlim/Badges4-README.md-Profile
+
 
