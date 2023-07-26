@@ -9,6 +9,7 @@ This is a backend application for a Social Media Platform. The API's are written
 ![GitHub Open PRs](https://img.shields.io/github/issues-pr-raw/karthikbalasubramani/connectify.svg?label=Open%20Pull%20Requests)
 ![GitHub Closed PRs](https://img.shields.io/github/issues-pr-closed/karthikbalasubramani/connectify.svg?label=Closed%20Pull%20Requests)
 [![GitHub last commit](https://img.shields.io/github/last-commit/karthikbalasubramani/connectify.svg?label=Last%20Commit)](https://github.com/karthikbalasubramani/connectify/commits/master)
+[![Pytest API TestCases Workflow](https://github.com/karthikbalasubramani/connectify/actions/workflows/main.yaml/badge.svg)](https://github.com/karthikbalasubramani/connectify/actions/workflows/main.yaml)
 
 
 ## Technologies Used
