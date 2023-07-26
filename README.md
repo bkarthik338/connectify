@@ -16,7 +16,7 @@ This is a backend application for a Social Media Platform. The API's are written
 </div>
 
 ## Languages  
-[![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=karthikbalasubramani&layout=compact)](https://github.com/karthikbalasubramani/connectify)
+[![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=karthikbalasubramani&exclude_repo=polygotvoice,SecurePassCLI&layout=compact)](https://github.com/karthikbalasubramani/connectify)
 
 ## Stats
 [![Anurag's GitHub stats](https://github-readme-stats.vercel.app/api?username=karthikbalasubramani&hide=stars)](https://github.com/karthikbalasubramani/connectify)
