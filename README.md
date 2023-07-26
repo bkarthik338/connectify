@@ -3,6 +3,14 @@
 ## Overview
 This is a backend application for a Social Media Platform. The API's are written in GraphQL using the Strawberry package, and the server utilizes FastAPI. The repository is configured to run on each PR to the development branch. The application allows CRUD operations for tweets, comments, and liking/disliking tweets, as well as CRUD operations for User modules.
 
+
+## My Stats
+![GitHub commits](https://img.shields.io/github/commit-activity/y/karthikbalasubramani/connectify.svg?label=Commits)
+![GitHub Open PRs](https://img.shields.io/github/issues-pr-raw/karthikbalasubramani/connectify.svg?label=Open%20Pull%20Requests)
+![GitHub Closed PRs](https://img.shields.io/github/issues-pr-closed/karthikbalasubramani/connectify.svg?label=Closed%20Pull%20Requests)
+[![GitHub last commit](https://img.shields.io/github/last-commit/karthikbalasubramani/connectify.svg?label=Last%20Commit)](https://github.com/karthikbalasubramani/connectify/commits/master)
+
+
 ## Technologies Used
 <div>
   <img src = "https://img.shields.io/badge/fastapi-109989?style=for-the-badge&logo=FASTAPI&logoColor=white">
@@ -18,12 +26,6 @@ This is a backend application for a Social Media Platform. The API's are written
 ## Languages  
 [![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=karthikbalasubramani&exclude_repo=polygotvoice,SecurePassCLI&layout=compact)](https://github.com/karthikbalasubramani/connectify)
 
-## Stats
-[![Anurag's GitHub stats](https://github-readme-stats.vercel.app/api?username=karthikbalasubramani&hide=stars)](https://github.com/karthikbalasubramani/connectify)
-
-
-## Summary Card
-<img width='500' src="https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=karthikbalasubramani" />
 
 ## Quick Start
 ### 1. Cloning the Connectify Repository
