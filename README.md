@@ -21,6 +21,10 @@ This is a backend application for a Social Media Platform. The API's are written
 ## Stats
 [![Anurag's GitHub stats](https://github-readme-stats.vercel.app/api?username=karthikbalasubramani&hide=stars)](https://github.com/karthikbalasubramani/connectify)
 
+
+## Summary Card
+<img width='500' src="https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=karthikbalasubramani" />
+
 ## Quick Start
 ### 1. Cloning the Connectify Repository
   `git clone https://github.com/karthikbalasubramani/connectify.git`
@@ -41,5 +45,6 @@ This is a backend application for a Social Media Platform. The API's are written
 
 ### References:
 1. For Technology Badges: https://github.com/alexandresanlim/Badges4-README.md-Profile
+2. For Technology Badges: https://github.com/alexandresanlim/xamarin-sample-gallery
 
 
